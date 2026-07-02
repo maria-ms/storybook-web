@@ -19,6 +19,7 @@
     "@storybook/addon-docs": "latest",
     "@storybook/addon-themes": "latest",
     "@storybook/web-components-vite": "latest",
-    "storybook": "latest"
+    "storybook": "latest",
+    "vite": "^8.1.2"
   }
 }
