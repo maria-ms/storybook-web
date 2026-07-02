@@ -1,0 +1,24 @@
+{
+  "name": "@maria-ms/storybook-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Storybook for Maria design system Web Components.",
+  "type": "module",
+  "scripts": {
+    "dev": "storybook dev -p 6006",
+    "build": "storybook build",
+    "check": "node --check .storybook/main.mjs && node --check .storybook/preview.mjs && node --check src/story-helpers.mjs && node --check src/avatar.stories.mjs && node --check src/icons.mjs && node --check src/dropdown.stories.mjs && node --check src/input-number.stories.mjs"
+  },
+  "dependencies": {
+    "@maria-ms/components-web": "^1.0.0",
+    "@maria-ms/tokens": "^1.0.0"
+  },
+  "devDependencies": {
+    "@storybook/addon-a11y": "latest",
+    "@storybook/addon-designs": "^11.1.3",
+    "@storybook/addon-docs": "latest",
+    "@storybook/addon-themes": "latest",
+    "@storybook/web-components-vite": "latest",
+    "storybook": "latest"
+  }
+}

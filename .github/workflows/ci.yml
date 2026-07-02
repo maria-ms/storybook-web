@@ -1,0 +1,78 @@
+name: integration
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  release:
+    types:
+      - published
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: check
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v7
+
+      - name: setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 26.x
+
+      - name: install
+        run: npm install --legacy-peer-deps
+
+      - name: check
+        run: npm run check
+
+  publish:
+    name: publish to github pages
+    needs: check
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v7
+
+      - name: setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 26.x
+
+      - name: install
+        run: npm install --legacy-peer-deps
+
+      - name: build
+        run: npm run build
+
+      - name: configure github pages
+        uses: actions/configure-pages@v5
+
+      - name: upload github pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: storybook-static
+
+      - name: deploy github pages
+        id: deployment
+        uses: actions/deploy-pages@v4
