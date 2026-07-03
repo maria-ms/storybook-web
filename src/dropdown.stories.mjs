@@ -44,9 +44,9 @@ const storyStyles = () => {
       background: var(--ds-component-button-color-background-tertiary);
       color: var(--ds-component-button-color-foreground-primary);
       font: inherit;
-      font-size: var(--ds-primitive-font-size-small);
-      font-weight: var(--ds-primitive-font-weight-medium);
-      line-height: var(--ds-primitive-font-line-height-small);
+      font-size: var(--ds-semantic-typography-body-small-font-size);
+      font-weight: var(--ds-semantic-typography-body-small-font-weight-medium);
+      line-height: var(--ds-semantic-typography-body-small-line-height);
       letter-spacing: 0;
       text-decoration: none;
       cursor: pointer;

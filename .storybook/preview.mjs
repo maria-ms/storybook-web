@@ -2,6 +2,7 @@ import { withThemeByDataAttribute } from "@storybook/addon-themes";
 
 import "@maria-ms/tokens/css/light";
 import "@maria-ms/tokens/css/dark";
+import "../src/preview.css";
 
 /** @type {import("@storybook/web-components-vite").Preview} */
 export default {
