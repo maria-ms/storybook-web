@@ -131,9 +131,7 @@ const meta = {
     ariaInvalid: { control: "boolean", name: "aria-invalid" },
     ariaLabel: { control: "text", name: "aria-label" },
     controls: { control: "select", options: ["", "none"] },
-    description: { control: "text" },
     disabled: { control: "boolean" },
-    label: { control: "text" },
     labelPosition: {
       control: "select",
       name: "label-position",
@@ -148,6 +146,8 @@ const meta = {
     size: { control: "select", options: ["", "small"] },
     step: { control: "text" },
     value: { control: "text" },
+    description: { control: false, table: { disable: true } },
+    label: { control: false, table: { disable: true } },
     suffixIcon: { control: false, table: { disable: true } },
   },
   parameters: inputParameters(states.default, "40012630:35259"),

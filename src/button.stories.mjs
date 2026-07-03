@@ -23,13 +23,13 @@ const iconLabels = {
 
 const buttonAttributes = (state) => ({
   type: state.type,
+  variant: state.variant,
   size: state.size,
   tone: state.tone,
   disabled: state.disabled,
   href: state.href,
   target: state.target,
   rel: state.rel,
-  "button-type": state.buttonType,
   "aria-label": state.ariaLabel,
 });
 
@@ -107,13 +107,13 @@ const states = {
     ariaLabel: "Search",
     mediaIcon: "search",
   },
-  link: button({ href: "#button-link", type: "link" }),
-  linkMuted: button({ href: "#button-link-muted", type: "link-muted" }),
-  ghost: button({ type: "ghost" }),
-  outline: button({ type: "outline" }),
-  secondary: button({ type: "secondary" }),
+  link: button({ href: "#button-link", variant: "link" }),
+  linkMuted: button({ href: "#button-link-muted", variant: "link-muted" }),
+  ghost: button({ variant: "ghost" }),
+  outline: button({ variant: "outline" }),
+  secondary: button({ variant: "secondary" }),
   destructive: button({ tone: "destructive" }),
-  destructiveSecondary: button({ tone: "destructive", type: "secondary" }),
+  destructiveSecondary: button({ tone: "destructive", variant: "secondary" }),
   sizes: [
     button({ size: "x-small" }),
     button({ size: "small" }),
@@ -151,14 +151,8 @@ const meta = {
   args: states.default,
   argTypes: {
     ariaLabel: { control: "text", name: "aria-label" },
-    buttonType: {
-      control: "select",
-      name: "button-type",
-      options: ["", "button", "submit", "reset"],
-    },
     disabled: { control: "boolean" },
     href: { control: "text" },
-    label: { control: "text" },
     rel: { control: "text" },
     size: {
       control: "select",
@@ -166,11 +160,13 @@ const meta = {
     },
     target: { control: "text" },
     tone: { control: "select", options: ["", "destructive"] },
-    type: {
+    type: { control: "select", options: ["", "button", "submit", "reset"] },
+    variant: {
       control: "select",
       options: ["", "primary", "secondary", "outline", "link", "link-muted", "ghost"],
     },
     endIcon: { control: false, table: { disable: true } },
+    label: { control: false, table: { disable: true } },
     mediaIcon: { control: false, table: { disable: true } },
     width: { control: false, table: { disable: true } },
   },

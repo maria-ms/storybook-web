@@ -12,7 +12,7 @@ import {
 } from "./story-helpers.mjs";
 
 const alertAttributes = (state) => ({
-  type: state.type,
+  tone: state.tone,
   size: state.size,
 });
 
@@ -26,7 +26,7 @@ const renderAction = (state) => {
   const button = document.createElement("ds-button");
 
   button.slot = "action";
-  button.setAttribute("type", "secondary");
+  button.setAttribute("variant", "secondary");
   button.append(state.actionLabel);
 
   return button;
@@ -49,7 +49,7 @@ const renderAlert = (state) => {
 
 const sourceAction = (state) =>
   state.actionLabel
-    ? `<ds-button slot="action" type="secondary">${escapeHtml(state.actionLabel)}</ds-button>`
+    ? `<ds-button slot="action" variant="secondary">${escapeHtml(state.actionLabel)}</ds-button>`
     : "";
 
 const sourceAlert = (state) => {
@@ -77,23 +77,23 @@ const alertParameters = (args, design) => ({
 const alert = (state = {}) => ({
   actionLabel: "Button",
   description: "This is an alert description.",
+  tone: "success",
   title: "Success",
-  type: "success",
   ...state,
 });
 
 const states = {
   default: alert(),
-  error: alert({ title: "Error", type: "error" }),
-  info: alert({ title: "Info", type: "info" }),
+  error: alert({ title: "Error", tone: "error" }),
+  info: alert({ title: "Info", tone: "info" }),
   medium: alert({ size: "medium" }),
   noAction: alert({ actionLabel: "" }),
   small: alert({ size: "small" }),
   success: alert(),
-  warning: alert({ title: "Warning", type: "warning" }),
+  warning: alert({ title: "Warning", tone: "warning" }),
 };
 
-const variantItems = [
+const toneItems = [
   { ...states.success, label: "Success" },
   { ...states.info, label: "Info" },
   { ...states.warning, label: "Warning" },
@@ -133,17 +133,17 @@ const meta = {
   render: renderAlert,
   args: states.default,
   argTypes: {
-    actionLabel: { control: "text", name: "action slot" },
-    description: { control: "text" },
     size: {
       control: "select",
       options: ["", "large", "medium", "small"],
     },
-    title: { control: "text" },
-    type: {
+    tone: {
       control: "select",
       options: ["", "success", "info", "warning", "error"],
     },
+    actionLabel: { control: false, table: { disable: true } },
+    description: { control: false, table: { disable: true } },
+    title: { control: false, table: { disable: true } },
     width: { control: false, table: { disable: true } },
   },
   parameters: alertParameters(states.default, "40012630:1307"),
@@ -186,10 +186,10 @@ export const WithoutAction = {
   parameters: alertParameters(states.noAction, "40012630:1307"),
 };
 
-export const Variants = {
-  args: { items: variantItems },
+export const Tones = {
+  args: { items: toneItems },
   render: ({ items }) => renderGroup(items),
-  parameters: groupParameters(variantItems, "40012630:1306"),
+  parameters: groupParameters(toneItems, "40012630:1306"),
   argTypes: {
     items: { control: false, table: { disable: true } },
   },

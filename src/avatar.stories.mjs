@@ -163,7 +163,7 @@ const meta = {
   component: "user-avatar",
   tags: ["autodocs"],
   render: renderAvatar,
-  args: states.initials,
+  args: states.placeholder,
   argTypes: {
     ariaLabel: { control: "text", name: "aria-label" },
     initials: { control: "text" },
@@ -177,7 +177,7 @@ const meta = {
     imageAlt: { control: false, table: { disable: true } },
     media: { control: false, table: { disable: true } },
   },
-  parameters: avatarParameters(states.initials),
+  parameters: avatarParameters(states.placeholder),
 };
 
 export default meta;

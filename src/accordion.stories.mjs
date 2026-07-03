@@ -140,17 +140,17 @@ const meta = {
   args: states.default,
   argTypes: {
     ariaLabel: { control: "text", name: "aria-label" },
-    content: { control: "text" },
     disabled: { control: "boolean" },
     expanded: { control: "boolean" },
-    title: { control: "text" },
     width: {
       control: "text",
       name: "--accordion-width",
       table: { category: "CSS custom properties" },
     },
+    content: { control: false, table: { disable: true } },
     items: { control: false, table: { disable: true } },
-    multiple: { control: "boolean" },
+    multiple: { control: false, table: { disable: true } },
+    title: { control: false, table: { disable: true } },
   },
   parameters: accordionParameters(states.default, "40002151:4271"),
 };
