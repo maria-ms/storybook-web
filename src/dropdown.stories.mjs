@@ -13,23 +13,79 @@ import {
   textSlot,
 } from "./story-helpers.mjs";
 
-const avatarTriggerStyles = {
-  "--dropdown-trigger-background": "transparent",
-  "--dropdown-trigger-border": "0",
-  "--dropdown-trigger-min-height": "40px",
-  "--dropdown-trigger-padding": "0",
+const chevronPaths = {
+  down: "M4 6L8 10L12 6",
+  up: "M4 10L8 6L12 10",
 };
 
 const contentParts = (state) => (Array.isArray(state.content) ? state.content : []);
 
 const groupItems = (group) => (Array.isArray(group.items) ? group.items : []);
 
-const triggerKind = (state) => state.trigger?.kind || "text";
-
 const dropdownStyles = (state) => ({
-  ...(triggerKind(state) === "avatar" ? avatarTriggerStyles : {}),
   ...(state.width ? { "--dropdown-menu-width": state.width } : {}),
 });
+
+const storyStyles = () => {
+  const element = document.createElement("style");
+
+  element.textContent = `
+    .dropdown-story-trigger {
+      box-sizing: border-box;
+      display: inline-flex;
+      min-height: 28px;
+      align-items: center;
+      justify-content: center;
+      gap: var(--ds-primitive-space-02);
+      border: 1px solid var(--ds-component-button-color-border-primary);
+      border-radius: var(--ds-primitive-radius-04);
+      padding: var(--ds-primitive-space-02) var(--ds-primitive-space-03);
+      appearance: none;
+      background: var(--ds-component-button-color-background-tertiary);
+      color: var(--ds-component-button-color-foreground-primary);
+      font: inherit;
+      font-size: var(--ds-primitive-font-size-small);
+      font-weight: var(--ds-primitive-font-weight-semibold);
+      line-height: var(--ds-primitive-font-line-height-small);
+      letter-spacing: 0;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .dropdown-story-trigger--avatar {
+      min-height: 40px;
+      border: 0;
+      border-radius: var(--ds-primitive-radius-full);
+      padding: 0;
+      background: transparent;
+    }
+
+    .dropdown-story-trigger:focus-visible,
+    drop-down[open] > .dropdown-story-trigger {
+      outline: 0;
+      box-shadow:
+        var(--ds-semantic-shadow-xs-offset-x)
+          var(--ds-semantic-shadow-xs-offset-y)
+          var(--ds-semantic-shadow-xs-blur)
+          var(--ds-semantic-shadow-xs-spread)
+          var(--ds-semantic-shadow-xs-color),
+        var(--ds-semantic-shadow-focused-4px-offset-x)
+          var(--ds-semantic-shadow-focused-4px-offset-y)
+          var(--ds-semantic-shadow-focused-4px-blur)
+          var(--ds-semantic-shadow-focused-4px-spread)
+          var(--ds-semantic-shadow-focused-4px-color);
+    }
+
+    .dropdown-story-trigger svg {
+      width: var(--ds-primitive-space-05);
+      height: var(--ds-primitive-space-05);
+      flex: 0 0 auto;
+      stroke: currentColor;
+    }
+  `;
+
+  return element;
+};
 
 const iconLabel = (name) =>
   ({
@@ -71,10 +127,43 @@ const renderAvatar = (slot, avatar = {}) => {
   return element;
 };
 
-const renderTrigger = (trigger = {}) => {
-  if (trigger.kind === "avatar") return renderAvatar("trigger", trigger);
-  if (trigger.kind === "icon") return icon("trigger", trigger.name);
-  return textSlot("trigger", trigger.label || "Account");
+const triggerChevron = (open) => {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  const shape = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+  svg.setAttribute("viewBox", "0 0 16 16");
+  svg.setAttribute("fill", "none");
+  svg.setAttribute("aria-hidden", "true");
+  shape.setAttribute("d", chevronPaths[open ? "up" : "down"]);
+  shape.setAttribute("stroke", "currentColor");
+  shape.setAttribute("stroke-width", "1.5");
+  shape.setAttribute("stroke-linecap", "round");
+  shape.setAttribute("stroke-linejoin", "round");
+  svg.append(shape);
+
+  return svg;
+};
+
+const renderTrigger = (trigger = {}, open = false) => {
+  const button = document.createElement("button");
+
+  button.slot = "trigger";
+  button.type = "button";
+  button.className = "dropdown-story-trigger";
+
+  if (trigger.kind === "avatar") {
+    button.classList.add("dropdown-story-trigger--avatar");
+    button.append(renderAvatar(undefined, trigger));
+    return button;
+  }
+
+  if (trigger.kind === "icon") {
+    button.append(icon(undefined, trigger.name), triggerChevron(open));
+    return button;
+  }
+
+  button.append(trigger.label || "Account", triggerChevron(open));
+  return button;
 };
 
 const renderHeader = (header) => {
@@ -145,14 +234,17 @@ const renderDropdown = (state) => {
   });
   setStyles(element, dropdownStyles(state));
 
-  element.append(renderTrigger(state.trigger), ...contentParts(state).map(renderPart));
-  container.append(element);
+  element.append(
+    renderTrigger(state.trigger, state.open),
+    ...contentParts(state).map(renderPart),
+  );
+  container.append(storyStyles(), element);
 
   return container;
 };
 
 const sourceIcon = (slot, name) =>
-  `<svg slot="${slot}" aria-hidden="true"><!-- ${iconLabel(name)} icon --></svg>`;
+  `<svg${sourceAttributes({ slot, "aria-hidden": "true" })}><!-- ${iconLabel(name)} icon --></svg>`;
 
 const sourceAvatar = (slot, avatar = {}) =>
   `<user-avatar${sourceAttributes({
@@ -168,12 +260,17 @@ const sourceAvatar = (slot, avatar = {}) =>
       : ""
   }</user-avatar>`;
 
-const sourceTrigger = (trigger = {}) =>
+const sourceChevron = (open) =>
+  `<svg aria-hidden="true"><!-- chevron-${open ? "up" : "down"} icon --></svg>`;
+
+const sourceTrigger = (trigger = {}, open = false) =>
   trigger.kind === "avatar"
-    ? sourceAvatar("trigger", trigger)
+    ? `<button slot="trigger" type="button">\n${indent(sourceAvatar(undefined, trigger))}\n</button>`
     : trigger.kind === "icon"
-      ? sourceIcon("trigger", trigger.name)
-      : `<span slot="trigger">${escapeHtml(trigger.label || "Account")}</span>`;
+      ? `<button slot="trigger" type="button">\n${indent(
+          [sourceIcon(undefined, trigger.name), sourceChevron(open)].join("\n"),
+        )}\n</button>`
+      : `<button slot="trigger" type="button">${escapeHtml(trigger.label || "Account")} ${sourceChevron(open)}</button>`;
 
 const sourceHeader = (header) => `
 <drop-down-header>
@@ -235,7 +332,7 @@ const sourceDropdown = (state) => `
   align: state.align,
   style: sourceStyle(dropdownStyles(state)),
 })}>
-${indent([sourceTrigger(state.trigger), ...contentParts(state).map(sourcePart)].join("\n"))}
+${indent([sourceTrigger(state.trigger, state.open), ...contentParts(state).map(sourcePart)].join("\n"))}
 </drop-down>
 `;
 
