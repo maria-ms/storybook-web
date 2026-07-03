@@ -20,8 +20,14 @@ const avatarTriggerStyles = {
   "--dropdown-trigger-padding": "0",
 };
 
+const contentParts = (state) => (Array.isArray(state.content) ? state.content : []);
+
+const groupItems = (group) => (Array.isArray(group.items) ? group.items : []);
+
+const triggerKind = (state) => state.trigger?.kind || "text";
+
 const dropdownStyles = (state) => ({
-  ...(state.trigger.kind === "avatar" ? avatarTriggerStyles : {}),
+  ...(triggerKind(state) === "avatar" ? avatarTriggerStyles : {}),
   ...(state.width ? { "--dropdown-menu-width": state.width } : {}),
 });
 
@@ -31,32 +37,54 @@ const iconLabel = (name) =>
     userPlus: "user-plus",
   })[name] || name;
 
-const renderAvatar = (slot, avatar) => {
+const avatarSvg = encodeURIComponent(`
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+    <rect width="80" height="80" fill="#d1d5db"/>
+    <circle cx="40" cy="30" r="14" fill="#374151"/>
+    <path d="M15 80c4-17 13.5-27 25-27s21 10 25 27" fill="#374151"/>
+  </svg>
+`);
+
+const avatarImage = `data:image/svg+xml,${avatarSvg}`;
+
+const avatarMedia = ({ alt }) => {
+  const element = document.createElement("img");
+
+  element.src = avatarImage;
+  element.srcset = `${avatarImage} 1x, ${avatarImage} 2x`;
+  element.alt = alt;
+
+  return element;
+};
+
+const renderAvatar = (slot, avatar = {}) => {
   const element = document.createElement("user-avatar");
 
   setAttributes(element, {
     slot,
     initials: avatar.initials,
+    size: avatar.size,
     status: avatar.status,
   });
+  if (avatar.media) element.append(avatarMedia(avatar.media));
 
   return element;
 };
 
-const renderTrigger = (trigger) => {
+const renderTrigger = (trigger = {}) => {
   if (trigger.kind === "avatar") return renderAvatar("trigger", trigger);
   if (trigger.kind === "icon") return icon("trigger", trigger.name);
-  return textSlot("trigger", trigger.label);
+  return textSlot("trigger", trigger.label || "Account");
 };
 
 const renderHeader = (header) => {
   const element = document.createElement("drop-down-header");
 
-  element.append(
-    renderAvatar("media", header.media),
-    textSlot("title", header.title),
-    textSlot("description", header.description),
-  );
+  if (header.media) element.append(renderAvatar("media", header.media));
+  if (header.title) element.append(textSlot("title", header.title));
+  if (header.description) {
+    element.append(textSlot("description", header.description));
+  }
 
   return element;
 };
@@ -78,11 +106,11 @@ const renderItem = (item) => {
   if (item.icon) element.append(icon("media", item.icon));
   if (item.description) {
     element.append(
-      textSlot("label", item.label),
-      textSlot("description", item.description),
+      textSlot("label", item.label || ""),
+      textSlot("description", item.description || ""),
     );
   } else {
-    element.append(item.label);
+    element.append(item.label || "");
   }
   if (item.end) element.append(textSlot("end", item.end));
 
@@ -93,7 +121,7 @@ const renderGroup = (group) => {
   const element = document.createElement("drop-down-group");
 
   setAttributes(element, { label: group.label });
-  element.append(...group.items.map(renderItem));
+  element.append(...groupItems(group).map(renderItem));
 
   return element;
 };
@@ -106,7 +134,7 @@ const renderPart = (part) =>
       : renderGroup(part);
 
 const renderDropdown = (state) => {
-  const story = document.createElement("div");
+  const container = document.createElement("div");
   const element = document.createElement("drop-down");
 
   setAttributes(element, {
@@ -117,34 +145,48 @@ const renderDropdown = (state) => {
   });
   setStyles(element, dropdownStyles(state));
 
-  element.append(renderTrigger(state.trigger), ...state.content.map(renderPart));
-  story.append(element);
+  element.append(renderTrigger(state.trigger), ...contentParts(state).map(renderPart));
+  container.append(element);
 
-  return story;
+  return container;
 };
 
 const sourceIcon = (slot, name) =>
   `<svg slot="${slot}" aria-hidden="true"><!-- ${iconLabel(name)} icon --></svg>`;
 
-const sourceAvatar = (slot, avatar) =>
+const sourceAvatar = (slot, avatar = {}) =>
   `<user-avatar${sourceAttributes({
     slot,
     initials: avatar.initials,
+    size: avatar.size,
     status: avatar.status,
-  })}></user-avatar>`;
+  })}>${
+    avatar.media
+      ? `
+  <img src="/avatar.jpg" alt="${escapeHtml(avatar.media.alt)}" />
+`
+      : ""
+  }</user-avatar>`;
 
-const sourceTrigger = (trigger) =>
+const sourceTrigger = (trigger = {}) =>
   trigger.kind === "avatar"
     ? sourceAvatar("trigger", trigger)
     : trigger.kind === "icon"
       ? sourceIcon("trigger", trigger.name)
-      : `<span slot="trigger">${escapeHtml(trigger.label)}</span>`;
+      : `<span slot="trigger">${escapeHtml(trigger.label || "Account")}</span>`;
 
 const sourceHeader = (header) => `
 <drop-down-header>
-${indent(sourceAvatar("media", header.media))}
-  <span slot="title">${escapeHtml(header.title)}</span>
-  <span slot="description">${escapeHtml(header.description)}</span>
+${indent(
+  [
+    header.media && sourceAvatar("media", header.media),
+    header.title && `<span slot="title">${escapeHtml(header.title)}</span>`,
+    header.description &&
+      `<span slot="description">${escapeHtml(header.description)}</span>`,
+  ]
+    .filter(Boolean)
+    .join("\n"),
+)}
 </drop-down-header>
 `;
 
@@ -162,8 +204,8 @@ const sourceItem = (item) => {
   const children = [
     item.icon && sourceIcon("media", item.icon),
     item.description
-      ? `<span slot="label">${escapeHtml(item.label)}</span>`
-      : escapeHtml(item.label),
+      ? `<span slot="label">${escapeHtml(item.label || "")}</span>`
+      : escapeHtml(item.label || ""),
     item.description &&
       `<span slot="description">${escapeHtml(item.description)}</span>`,
     item.end && `<span slot="end">${escapeHtml(item.end)}</span>`,
@@ -174,7 +216,7 @@ const sourceItem = (item) => {
 
 const sourceGroup = (group) => `
 <drop-down-group${sourceAttributes({ label: group.label })}>
-${indent(group.items.map(sourceItem).join("\n"))}
+${indent(groupItems(group).map(sourceItem).join("\n"))}
 </drop-down-group>
 `;
 
@@ -193,22 +235,27 @@ const sourceDropdown = (state) => `
   align: state.align,
   style: sourceStyle(dropdownStyles(state)),
 })}>
-${indent([sourceTrigger(state.trigger), ...state.content.map(sourcePart)].join("\n"))}
+${indent([sourceTrigger(state.trigger), ...contentParts(state).map(sourcePart)].join("\n"))}
 </drop-down>
 `;
 
-const story = ({ design, state }) => ({
-  render: () => renderDropdown(state),
-  parameters: {
-    ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-    docs: docsSource(sourceDropdown(state)),
-  },
+const dropdownParameters = (args, design) => ({
+  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
+  docs: docsSource(sourceDropdown(args)),
 });
 
 const account = {
   description: "isabel.navarro@gmail.com",
   initials: "IN",
   name: "Isabel Navarro",
+};
+
+const accountAvatar = {
+  kind: "avatar",
+  initials: account.initials,
+  media: { alt: account.name },
+  size: "md",
+  status: "online",
 };
 
 const accountGroups = [
@@ -265,7 +312,7 @@ const accountGroups = [
 
 const accountHeader = {
   kind: "header",
-  media: { kind: "avatar", initials: account.initials, status: "online" },
+  media: accountAvatar,
   title: account.name,
   description: account.description,
 };
@@ -313,12 +360,12 @@ const choiceContent = ({ kind, shortcuts = false }) => [
 const states = {
   avatar: dropdown({
     ariaLabel: "Account menu",
-    trigger: { kind: "avatar", initials: account.initials, status: "online" },
+    trigger: accountAvatar,
   }),
   avatarOpen: dropdown({
     ariaLabel: "Account menu",
     open: true,
-    trigger: { kind: "avatar", initials: account.initials, status: "online" },
+    trigger: accountAvatar,
   }),
   button: dropdown(),
   buttonOpen: dropdown({ open: true }),
@@ -403,71 +450,87 @@ const meta = {
   title: "Dropdown",
   component: "drop-down",
   tags: ["autodocs"],
-  ...story({ design: "40020967:38534", state: states.button }),
+  render: renderDropdown,
+  args: states.button,
+  argTypes: {
+    align: { control: "select", options: ["start", "end"] },
+    ariaLabel: { control: "text", name: "aria-label" },
+    disabled: { control: "boolean" },
+    open: { control: "boolean" },
+    width: {
+      control: "text",
+      name: "--dropdown-menu-width",
+      table: { category: "CSS custom properties" },
+    },
+    content: { control: false, table: { disable: true } },
+    trigger: { control: false, table: { disable: true } },
+  },
+  parameters: dropdownParameters(states.button, "40020967:38534"),
 };
 
 export default meta;
 
-export const Button = story({
-  design: "40020967:33101",
-  state: states.button,
-});
+export const Button = {
+  args: states.button,
+  parameters: dropdownParameters(states.button, "40020967:33101"),
+};
 
-export const ButtonOpen = story({
-  design: "40020967:33104",
-  state: states.buttonOpen,
-});
+export const ButtonOpen = {
+  args: states.buttonOpen,
+  parameters: dropdownParameters(states.buttonOpen, "40020967:33104"),
+};
 
-export const Icon = story({
-  design: "40020967:33259",
-  state: states.icon,
-});
+export const Icon = {
+  args: states.icon,
+  parameters: dropdownParameters(states.icon, "40020967:33259"),
+};
 
-export const IconOpen = story({
-  design: "40020967:33356",
-  state: states.iconOpen,
-});
+export const IconOpen = {
+  args: states.iconOpen,
+  parameters: dropdownParameters(states.iconOpen, "40020967:33356"),
+};
 
-export const Avatar = story({
-  design: "40020967:33715",
-  state: states.avatar,
-});
+export const Avatar = {
+  args: states.avatar,
+  parameters: dropdownParameters(states.avatar, "40020967:33715"),
+};
 
-export const AvatarOpen = story({
-  design: "40020967:33805",
-  state: states.avatarOpen,
-});
+export const AvatarOpen = {
+  args: states.avatarOpen,
+  parameters: dropdownParameters(states.avatarOpen, "40020967:33805"),
+};
 
-export const WithoutHeader = story({
-  design: "40020967:22605",
-  state: states.withoutHeader,
-});
+export const WithoutHeader = {
+  args: states.withoutHeader,
+  parameters: dropdownParameters(states.withoutHeader, "40020967:22605"),
+};
 
-export const WithShortcuts = story({
-  design: "40020967:23669",
-  state: states.shortcuts,
-});
+export const WithShortcuts = {
+  args: states.shortcuts,
+  parameters: dropdownParameters(states.shortcuts, "40020967:23669"),
+};
 
-export const RichItems = story({
-  state: states.rich,
-});
+export const RichItems = {
+  args: states.rich,
+  parameters: dropdownParameters(states.rich),
+};
 
-export const RadioItems = story({
-  design: "40020967:17520",
-  state: states.radio,
-});
+export const RadioItems = {
+  args: states.radio,
+  parameters: dropdownParameters(states.radio, "40020967:17520"),
+};
 
-export const RadioItemsWithShortcuts = story({
-  design: "40020967:17523",
-  state: states.radioShortcuts,
-});
+export const RadioItemsWithShortcuts = {
+  args: states.radioShortcuts,
+  parameters: dropdownParameters(states.radioShortcuts, "40020967:17523"),
+};
 
-export const CheckboxItems = story({
-  design: "40020967:17528",
-  state: states.checkbox,
-});
+export const CheckboxItems = {
+  args: states.checkbox,
+  parameters: dropdownParameters(states.checkbox, "40020967:17528"),
+};
 
-export const CheckboxItemsWithShortcuts = story({
-  design: "40020967:17531",
-  state: states.checkboxShortcuts,
-});
+export const CheckboxItemsWithShortcuts = {
+  args: states.checkboxShortcuts,
+  parameters: dropdownParameters(states.checkboxShortcuts, "40020967:17531"),
+};

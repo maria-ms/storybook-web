@@ -35,8 +35,8 @@ const renderInput = (state) => {
   if (state.description) {
     element.append(textSlot("description", state.description));
   }
-  if (state.suffix?.kind === "icon") {
-    element.append(icon("suffix", state.suffix.name));
+  if (state.suffixIcon) {
+    element.append(icon("suffix", state.suffixIcon));
   }
 
   return element;
@@ -48,8 +48,8 @@ const sourceInput = (state) => {
     state.label && `<span slot="label">${escapeHtml(state.label)}</span>`,
     state.description &&
       `<span slot="description">${escapeHtml(state.description)}</span>`,
-    state.suffix?.kind === "icon" &&
-      `<svg slot="suffix" aria-hidden="true"><!-- ${state.suffix.name} icon --></svg>`,
+    state.suffixIcon &&
+      `<svg slot="suffix" aria-hidden="true"><!-- ${state.suffixIcon} icon --></svg>`,
   ].filter(Boolean);
 
   return children.length
@@ -68,26 +68,27 @@ const renderForm = (state) => {
     event.preventDefault();
     output.value = new URLSearchParams(new FormData(form)).toString();
   });
-  form.append(renderInput(state.input), button, output);
+  form.append(renderInput(state), button, output);
 
   return form;
 };
 
 const sourceForm = (state) => `
 <form>
-${indent(sourceInput(state.input))}
+${indent(sourceInput(state))}
   <button type="submit">Submit</button>
   <output></output>
 </form>
 `;
 
-const story = ({ design, play, state, wrap }) => ({
-  render: () => (wrap === "form" ? renderForm(state) : renderInput(state)),
-  parameters: {
-    ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-    docs: docsSource(wrap === "form" ? sourceForm(state) : sourceInput(state)),
-  },
-  play,
+const inputParameters = (args, design) => ({
+  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
+  docs: docsSource(sourceInput(args)),
+});
+
+const formParameters = (args, design) => ({
+  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
+  docs: docsSource(sourceForm(args)),
 });
 
 const baseInput = {
@@ -99,30 +100,23 @@ const baseInput = {
 };
 
 const states = {
-  default: baseInput,
+  default: { ...baseInput },
   disabled: { ...baseInput, disabled: true, value: "1" },
   filled: { ...baseInput, value: "1" },
   focused: { ...baseInput, value: "1" },
-  form: {
-    input: {
-      ...baseInput,
-      name: "amount",
-      required: true,
-      value: "1",
-    },
-  },
+  form: { ...baseInput, name: "amount", required: true, value: "1" },
   invalid: { ...baseInput, ariaInvalid: true, value: "1" },
   labelStart: { ...baseInput, labelPosition: "start" },
   small: { ...baseInput, size: "small" },
   suffix: {
     ...baseInput,
     controls: "none",
-    suffix: { kind: "icon", name: "visa" },
+    suffixIcon: "visa",
   },
   suffixFilled: {
     ...baseInput,
     controls: "none",
-    suffix: { kind: "icon", name: "visa" },
+    suffixIcon: "visa",
     value: "1000",
   },
 };
@@ -131,64 +125,89 @@ const meta = {
   title: "Input Number",
   component: "input-number",
   tags: ["autodocs"],
-  ...story({ design: "40012630:35259", state: states.default }),
+  render: renderInput,
+  args: states.default,
+  argTypes: {
+    ariaInvalid: { control: "boolean", name: "aria-invalid" },
+    ariaLabel: { control: "text", name: "aria-label" },
+    controls: { control: "select", options: ["", "none"] },
+    description: { control: "text" },
+    disabled: { control: "boolean" },
+    label: { control: "text" },
+    labelPosition: {
+      control: "select",
+      name: "label-position",
+      options: ["", "start"],
+    },
+    max: { control: "text" },
+    min: { control: "text" },
+    name: { control: "text" },
+    placeholder: { control: "text" },
+    readonly: { control: "boolean" },
+    required: { control: "boolean" },
+    size: { control: "select", options: ["", "small"] },
+    step: { control: "text" },
+    value: { control: "text" },
+    suffixIcon: { control: false, table: { disable: true } },
+  },
+  parameters: inputParameters(states.default, "40012630:35259"),
 };
 
 export default meta;
 
-export const Default = story({
-  design: "40012630:35504",
-  state: states.default,
-});
+export const Default = {
+  args: states.default,
+  parameters: inputParameters(states.default, "40012630:35504"),
+};
 
-export const Filled = story({
-  design: "40020640:1898",
-  state: states.filled,
-});
+export const Filled = {
+  args: states.filled,
+  parameters: inputParameters(states.filled, "40020640:1898"),
+};
 
-export const Small = story({
-  design: "40012630:35260",
-  state: states.small,
-});
+export const Small = {
+  args: states.small,
+  parameters: inputParameters(states.small, "40012630:35260"),
+};
 
-export const LabelStart = story({
-  design: "40020640:2096",
-  state: states.labelStart,
-});
+export const LabelStart = {
+  args: states.labelStart,
+  parameters: inputParameters(states.labelStart, "40020640:2096"),
+};
 
-export const Suffix = story({
-  design: "40020640:2196",
-  state: states.suffix,
-});
+export const Suffix = {
+  args: states.suffix,
+  parameters: inputParameters(states.suffix, "40020640:2196"),
+};
 
-export const SuffixFilled = story({
-  design: "40020640:2249",
-  state: states.suffixFilled,
-});
+export const SuffixFilled = {
+  args: states.suffixFilled,
+  parameters: inputParameters(states.suffixFilled, "40020640:2249"),
+};
 
-export const Disabled = story({
-  design: "40020640:1922",
-  state: states.disabled,
-});
+export const Disabled = {
+  args: states.disabled,
+  parameters: inputParameters(states.disabled, "40020640:1922"),
+};
 
-export const Invalid = story({
-  design: "40020640:1946",
-  state: states.invalid,
-});
+export const Invalid = {
+  args: states.invalid,
+  parameters: inputParameters(states.invalid, "40020640:1946"),
+};
 
-export const Focused = story({
-  design: "40020640:1986",
-  state: states.focused,
+export const Focused = {
+  args: states.focused,
+  parameters: inputParameters(states.focused, "40020640:1986"),
   play: async ({ canvasElement }) => {
     canvasElement
       .querySelector("input-number")
       ?.shadowRoot?.querySelector("input")
       ?.focus();
   },
-});
+};
 
-export const Form = story({
-  design: "40012630:35504",
-  state: states.form,
-  wrap: "form",
-});
+export const Form = {
+  args: states.form,
+  render: renderForm,
+  parameters: formParameters(states.form, "40012630:35504"),
+};
