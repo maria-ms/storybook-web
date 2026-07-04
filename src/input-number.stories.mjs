@@ -1,3 +1,4 @@
+import "@maria-ms/components-web/button";
 import "@maria-ms/components-web/input-number";
 import { icon } from "./icons.mjs";
 import {
@@ -7,6 +8,7 @@ import {
   indent,
   setAttributes,
   sourceAttributes,
+  staticStoryParameters,
   textSlot,
 } from "./story-helpers.mjs";
 
@@ -59,11 +61,15 @@ const sourceInput = (state) => {
 
 const renderForm = (state) => {
   const form = document.createElement("form");
-  const button = document.createElement("button");
+  const button = document.createElement("ds-button");
   const output = document.createElement("output");
 
+  form.style.display = "grid";
+  form.style.width = "min(100%, 276px)";
+  form.style.gap = "var(--ds-primitive-space-04)";
   button.type = "submit";
   button.textContent = "Submit";
+  output.setAttribute("aria-live", "polite");
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     output.value = new URLSearchParams(new FormData(form)).toString();
@@ -74,9 +80,9 @@ const renderForm = (state) => {
 };
 
 const sourceForm = (state) => `
-<form>
+<form style="display: grid; gap: var(--ds-primitive-space-04); width: min(100%, 276px);">
 ${indent(sourceInput(state))}
-  <button type="submit">Submit</button>
+  <ds-button type="submit">Submit</ds-button>
   <output></output>
 </form>
 `;
@@ -91,6 +97,24 @@ const formParameters = (args, design) => ({
   docs: docsSource(sourceForm(args)),
 });
 
+const renderGroup = (items) => {
+  const container = document.createElement("div");
+
+  container.style.display = "flex";
+  container.style.alignItems = "flex-start";
+  container.style.flexWrap = "wrap";
+  container.style.gap = "var(--ds-primitive-space-06)";
+  container.append(...items.map(renderInput));
+
+  return container;
+};
+
+const groupParameters = (items, design) => ({
+  ...staticStoryParameters,
+  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
+  docs: docsSource(`<div>\n${indent(items.map(sourceInput).join("\n"))}\n</div>`),
+});
+
 const baseInput = {
   label: "Label",
   description: "This is an input description",
@@ -101,25 +125,23 @@ const baseInput = {
 
 const states = {
   default: { ...baseInput },
-  disabled: { ...baseInput, disabled: true, value: "1" },
-  filled: { ...baseInput, value: "1" },
   focused: { ...baseInput, value: "1" },
   form: { ...baseInput, name: "amount", required: true, value: "1" },
-  invalid: { ...baseInput, ariaInvalid: true, value: "1" },
-  labelStart: { ...baseInput, labelPosition: "start" },
-  small: { ...baseInput, size: "small" },
+  horizontalLabel: { ...baseInput, labelPosition: "start" },
+  small: { ...baseInput, description: "", size: "small" },
   suffix: {
-    ...baseInput,
-    controls: "none",
-    suffixIcon: "visa",
-  },
-  suffixFilled: {
     ...baseInput,
     controls: "none",
     suffixIcon: "visa",
     value: "1000",
   },
 };
+
+const stateItems = [
+  { ...baseInput, value: "1" },
+  { ...baseInput, disabled: true, value: "1" },
+  { ...baseInput, ariaInvalid: true, value: "1" },
+];
 
 const meta = {
   title: "Input Number",
@@ -160,39 +182,28 @@ export const Default = {
   parameters: inputParameters(states.default, "40012630:35504"),
 };
 
-export const Filled = {
-  args: states.filled,
-  parameters: inputParameters(states.filled, "40020640:1898"),
+export const States = {
+  args: { items: stateItems },
+  render: ({ items }) => renderGroup(items),
+  parameters: groupParameters(stateItems, "40020640:1898"),
+  argTypes: {
+    items: { control: false, table: { disable: true } },
+  },
 };
 
 export const Small = {
   args: states.small,
-  parameters: inputParameters(states.small, "40012630:35260"),
+  parameters: inputParameters(states.small, "40020640:2096"),
 };
 
-export const LabelStart = {
-  args: states.labelStart,
-  parameters: inputParameters(states.labelStart, "40020640:2096"),
+export const HorizontalLabel = {
+  args: states.horizontalLabel,
+  parameters: inputParameters(states.horizontalLabel, "40020640:2096"),
 };
 
-export const Suffix = {
+export const WithSuffix = {
   args: states.suffix,
-  parameters: inputParameters(states.suffix, "40020640:2196"),
-};
-
-export const SuffixFilled = {
-  args: states.suffixFilled,
-  parameters: inputParameters(states.suffixFilled, "40020640:2249"),
-};
-
-export const Disabled = {
-  args: states.disabled,
-  parameters: inputParameters(states.disabled, "40020640:1922"),
-};
-
-export const Invalid = {
-  args: states.invalid,
-  parameters: inputParameters(states.invalid, "40020640:1946"),
+  parameters: inputParameters(states.suffix, "40020640:2249"),
 };
 
 export const Focused = {

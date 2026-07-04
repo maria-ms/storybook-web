@@ -1,4 +1,5 @@
 import "@maria-ms/components-web/button";
+import "@maria-ms/components-web/input-text";
 import {
   docsSource,
   escapeHtml,
@@ -8,6 +9,8 @@ import {
   setStyles,
   sourceAttributes,
   sourceStyle,
+  staticStoryParameters,
+  textSlot,
 } from "./story-helpers.mjs";
 
 const iconPaths = {
@@ -22,7 +25,17 @@ const iconLabels = {
 };
 
 const buttonAttributes = (state) => ({
+  autofocus: state.autofocus,
+  download: state.download,
+  form: state.form,
+  formaction: state.formaction,
+  formenctype: state.formenctype,
+  formmethod: state.formmethod,
+  formnovalidate: state.formnovalidate,
+  formtarget: state.formtarget,
+  name: state.name,
   type: state.type,
+  value: state.value,
   variant: state.variant,
   size: state.size,
   tone: state.tone,
@@ -60,7 +73,6 @@ const renderButton = (state) => {
 
   setAttributes(element, buttonAttributes(state));
   setStyles(element, buttonStyles(state));
-
   if (state.mediaIcon) element.append(buttonIcon("media", state.mediaIcon));
   if (state.label) element.append(state.label);
   if (state.endIcon) element.append(buttonIcon("end", state.endIcon));
@@ -92,36 +104,19 @@ const buttonParameters = (args, design) => ({
   docs: docsSource(sourceButton(args)),
 });
 
+const sourceForm = (state) => `
+<form>
+  <input-text type="email" name="email" value="isabel@example.com" required>
+    <span slot="label">Email</span>
+  </input-text>
+${indent(sourceButton(state))}
+</form>
+`;
+
 const button = (state = {}) => ({
   label: "Button",
-  mediaIcon: "search",
-  endIcon: "arrowUpRight",
   ...state,
 });
-
-const states = {
-  default: button(),
-  disabled: button({ disabled: true }),
-  focused: button(),
-  iconOnly: {
-    ariaLabel: "Search",
-    mediaIcon: "search",
-  },
-  link: button({ href: "#button-link", variant: "link" }),
-  linkMuted: button({ href: "#button-link-muted", variant: "link-muted" }),
-  ghost: button({ variant: "ghost" }),
-  outline: button({ variant: "outline" }),
-  secondary: button({ variant: "secondary" }),
-  destructive: button({ tone: "destructive" }),
-  destructiveSecondary: button({ tone: "destructive", variant: "secondary" }),
-  sizes: [
-    button({ size: "x-small" }),
-    button({ size: "small" }),
-    button({ size: "medium" }),
-    button({ size: "large" }),
-  ],
-  withoutIcons: button({ endIcon: "", mediaIcon: "" }),
-};
 
 const renderGroup = (items) => {
   const container = document.createElement("div");
@@ -139,9 +134,76 @@ const sourceGroup = (items) =>
   `<div>\n${indent(items.map(sourceButton).join("\n"))}\n</div>`;
 
 const groupParameters = (items, design) => ({
+  ...staticStoryParameters,
   ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
   docs: docsSource(sourceGroup(items)),
 });
+
+const formParameters = (args) => ({
+  docs: docsSource(sourceForm(args)),
+});
+
+const renderForm = (state) => {
+  const form = document.createElement("form");
+  const input = document.createElement("input-text");
+  const output = document.createElement("output");
+
+  form.style.display = "grid";
+  form.style.width = "min(100%, 360px)";
+  form.style.gap = "var(--ds-primitive-space-04)";
+  setAttributes(input, {
+    name: "email",
+    required: true,
+    type: "email",
+    value: "isabel@example.com",
+  });
+  input.append(textSlot("label", "Email"));
+  output.setAttribute("aria-live", "polite");
+  form.append(input, renderButton(state), output);
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = new FormData(form, event.submitter);
+    output.value = `Submitted ${data.get("email")} with ${data.get(state.name)}`;
+  });
+
+  return form;
+};
+
+const states = {
+  default: button(),
+  asLink: button({ href: "#settings", variant: "link" }),
+  disabled: button({ disabled: true }),
+  focused: button(),
+  iconOnly: {
+    ariaLabel: "Search",
+    mediaIcon: "search",
+  },
+  form: button({ label: "Save", name: "intent", type: "submit", value: "save" }),
+  withIcons: button({ mediaIcon: "search", endIcon: "arrowUpRight" }),
+};
+
+const variantItems = [
+  button(),
+  button({ variant: "secondary" }),
+  button({ variant: "outline" }),
+  button({ variant: "ghost" }),
+  button({ href: "#link", variant: "link" }),
+  button({ href: "#link-muted", variant: "link-muted" }),
+];
+
+const toneItems = [
+  button(),
+  button({ tone: "destructive" }),
+  button({ tone: "destructive", variant: "secondary" }),
+  button({ tone: "destructive", variant: "outline" }),
+];
+
+const sizeItems = [
+  button({ size: "x-small" }),
+  button({ size: "small" }),
+  button({ size: "medium" }),
+  button({ size: "large" }),
+];
 
 const meta = {
   title: "Button",
@@ -150,24 +212,34 @@ const meta = {
   render: renderButton,
   args: states.default,
   argTypes: {
-    ariaLabel: { control: "text", name: "aria-label" },
     disabled: { control: "boolean" },
-    href: { control: "text" },
-    rel: { control: "text" },
+    label: { control: "text" },
     size: {
       control: "select",
       options: ["", "x-small", "small", "medium", "large"],
     },
-    target: { control: "text" },
     tone: { control: "select", options: ["", "destructive"] },
     type: { control: "select", options: ["", "button", "submit", "reset"] },
     variant: {
       control: "select",
       options: ["", "primary", "secondary", "outline", "link", "link-muted", "ghost"],
     },
+    ariaLabel: { control: false, table: { disable: true } },
+    autofocus: { control: false, table: { category: "Native button attributes" } },
+    download: { control: false, table: { category: "Link attributes" } },
     endIcon: { control: false, table: { disable: true } },
-    label: { control: false, table: { disable: true } },
+    form: { control: false, table: { category: "Native button attributes" } },
+    formaction: { control: false, table: { category: "Native button attributes" } },
+    formenctype: { control: false, table: { category: "Native button attributes" } },
+    formmethod: { control: false, table: { category: "Native button attributes" } },
+    formnovalidate: { control: false, table: { category: "Native button attributes" } },
+    formtarget: { control: false, table: { category: "Native button attributes" } },
+    href: { control: false, table: { category: "Link attributes" } },
     mediaIcon: { control: false, table: { disable: true } },
+    name: { control: false, table: { category: "Native button attributes" } },
+    rel: { control: false, table: { category: "Link attributes" } },
+    target: { control: false, table: { category: "Link attributes" } },
+    value: { control: false, table: { category: "Native button attributes" } },
     width: { control: false, table: { disable: true } },
   },
   parameters: buttonParameters(states.default, "40002012:9001"),
@@ -180,39 +252,52 @@ export const Default = {
   parameters: buttonParameters(states.default, "40002012:9001"),
 };
 
-export const Secondary = {
-  args: states.secondary,
-  parameters: buttonParameters(states.secondary, "40002012:8956"),
+export const Variants = {
+  args: { items: variantItems },
+  render: ({ items }) => renderGroup(items),
+  parameters: groupParameters(variantItems, "40002012:8988"),
+  argTypes: {
+    items: { control: false, table: { disable: true } },
+  },
 };
 
-export const Outline = {
-  args: states.outline,
-  parameters: buttonParameters(states.outline, "40010741:10901"),
+export const Tones = {
+  args: { items: toneItems },
+  render: ({ items }) => renderGroup(items),
+  parameters: groupParameters(toneItems, "40020628:2943"),
+  argTypes: {
+    items: { control: false, table: { disable: true } },
+  },
 };
 
-export const Link = {
-  args: states.link,
-  parameters: buttonParameters(states.link, "40002278:5081"),
+export const Sizes = {
+  args: { items: sizeItems },
+  render: ({ items }) => renderGroup(items),
+  parameters: groupParameters(sizeItems, "40002012:8988"),
+  argTypes: {
+    items: { control: false, table: { disable: true } },
+  },
 };
 
-export const LinkMuted = {
-  args: states.linkMuted,
-  parameters: buttonParameters(states.linkMuted, "40020628:2838"),
+export const WithIcons = {
+  args: states.withIcons,
+  parameters: buttonParameters(states.withIcons, "40002012:9001"),
 };
 
-export const Ghost = {
-  args: states.ghost,
-  parameters: buttonParameters(states.ghost, "40002012:8911"),
+export const AsLink = {
+  args: states.asLink,
+  parameters: buttonParameters(states.asLink, "40002278:5081"),
 };
 
-export const Destructive = {
-  args: states.destructive,
-  parameters: buttonParameters(states.destructive, "40020628:2943"),
+export const Form = {
+  args: states.form,
+  render: renderForm,
+  parameters: formParameters(states.form),
 };
 
-export const DestructiveSecondary = {
-  args: states.destructiveSecondary,
-  parameters: buttonParameters(states.destructiveSecondary, "40020628:3007"),
+export const IconOnly = {
+  args: states.iconOnly,
+  parameters: buttonParameters(states.iconOnly, "40002012:9001"),
 };
 
 export const Disabled = {
@@ -225,24 +310,5 @@ export const Focused = {
   parameters: buttonParameters(states.focused, "40020627:2187"),
   play: async ({ canvasElement }) => {
     canvasElement.querySelector("ds-button")?.focus();
-  },
-};
-
-export const IconOnly = {
-  args: states.iconOnly,
-  parameters: buttonParameters(states.iconOnly, "40002012:9001"),
-};
-
-export const WithoutIcons = {
-  args: states.withoutIcons,
-  parameters: buttonParameters(states.withoutIcons),
-};
-
-export const Sizes = {
-  args: { items: states.sizes },
-  render: ({ items }) => renderGroup(items),
-  parameters: groupParameters(states.sizes, "40002012:8988"),
-  argTypes: {
-    items: { control: false, table: { disable: true } },
   },
 };

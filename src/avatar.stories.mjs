@@ -2,8 +2,10 @@ import "@maria-ms/components-web/avatar";
 import {
   docsSource,
   escapeHtml,
+  indent,
   setAttributes,
   sourceAttributes,
+  staticStoryParameters,
 } from "./story-helpers.mjs";
 
 const avatarSvg = encodeURIComponent(`
@@ -112,7 +114,41 @@ const avatarParameters = (args) => ({
   docs: docsSource(sourceAvatar(args)),
 });
 
+const renderGroup = (items) => {
+  const container = document.createElement("div");
+
+  container.style.display = "flex";
+  container.style.alignItems = "center";
+  container.style.flexWrap = "wrap";
+  container.style.gap = "var(--ds-primitive-space-05)";
+  container.append(...items.map(renderAvatar));
+
+  return container;
+};
+
+const groupParameters = (items) => ({
+  ...staticStoryParameters,
+  docs: docsSource(`<div>\n${indent(items.map(sourceAvatar).join("\n"))}\n</div>`),
+});
+
 const states = {
+  default: {
+    initials: "IN",
+    size: "md",
+  },
+  image: {
+    size: "md",
+    media: "image",
+    imageAlt: "Isabel Navarro",
+  },
+  picture: {
+    size: "md",
+    media: "picture",
+    imageAlt: "Isabel Navarro",
+  },
+  placeholder: {
+    size: "md",
+  },
   badge: {
     size: "md",
     media: "image",
@@ -120,50 +156,24 @@ const states = {
     badge: true,
     badgeAlt: "Acme",
   },
-  image: {
-    size: "md",
-    status: "online",
-    media: "image",
-    imageAlt: "Isabel Navarro",
-  },
-  initials: {
-    initials: "IN",
-    size: "md",
-    status: "online",
-  },
-  offline: {
-    initials: "IN",
-    size: "md",
-    status: "offline",
-  },
-  picture: {
-    initials: "IN",
-    size: "md",
-    status: "online",
-    media: "picture",
-    imageAlt: "Isabel Navarro",
-  },
-  placeholder: {
-    size: "md",
-  },
-  small: {
-    initials: "IN",
-    size: "sm",
-    status: "online",
-  },
-  large: {
-    initials: "IN",
-    size: "lg",
-    status: "online",
-  },
 };
+
+const statusItems = [
+  { initials: "IN", size: "md", status: "online" },
+  { initials: "IN", size: "md", status: "offline" },
+];
+
+const sizeItems = ["xs", "sm", "md", "lg", "xl", "2xl"].map((size) => ({
+  initials: "IN",
+  size,
+}));
 
 const meta = {
   title: "Avatar",
   component: "user-avatar",
   tags: ["autodocs"],
   render: renderAvatar,
-  args: states.placeholder,
+  args: states.default,
   argTypes: {
     ariaLabel: { control: "text", name: "aria-label" },
     initials: { control: "text" },
@@ -177,14 +187,14 @@ const meta = {
     imageAlt: { control: false, table: { disable: true } },
     media: { control: false, table: { disable: true } },
   },
-  parameters: avatarParameters(states.placeholder),
+  parameters: avatarParameters(states.default),
 };
 
 export default meta;
 
-export const Initials = {
-  args: states.initials,
-  parameters: avatarParameters(states.initials),
+export const Default = {
+  args: states.default,
+  parameters: avatarParameters(states.default),
 };
 
 export const Image = {
@@ -197,27 +207,30 @@ export const Picture = {
   parameters: avatarParameters(states.picture),
 };
 
-export const Placeholder = {
-  args: states.placeholder,
-  parameters: avatarParameters(states.placeholder),
+export const Status = {
+  args: { items: statusItems },
+  render: ({ items }) => renderGroup(items),
+  parameters: groupParameters(statusItems),
+  argTypes: {
+    items: { control: false, table: { disable: true } },
+  },
 };
 
-export const Offline = {
-  args: states.offline,
-  parameters: avatarParameters(states.offline),
-};
-
-export const Badge = {
+export const CustomBadge = {
   args: states.badge,
   parameters: avatarParameters(states.badge),
 };
 
-export const Small = {
-  args: states.small,
-  parameters: avatarParameters(states.small),
+export const Sizes = {
+  args: { items: sizeItems },
+  render: ({ items }) => renderGroup(items),
+  parameters: groupParameters(sizeItems),
+  argTypes: {
+    items: { control: false, table: { disable: true } },
+  },
 };
 
-export const Large = {
-  args: states.large,
-  parameters: avatarParameters(states.large),
+export const Placeholder = {
+  args: states.placeholder,
+  parameters: avatarParameters(states.placeholder),
 };

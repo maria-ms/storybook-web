@@ -22,7 +22,7 @@ const contentParts = (state) => (Array.isArray(state.content) ? state.content : 
 
 const groupItems = (group) => (Array.isArray(group.items) ? group.items : []);
 
-const dropdownStyles = (state) => ({
+const actionMenuStyles = (state) => ({
   ...(state.width ? { "--dropdown-menu-width": state.width } : {}),
 });
 
@@ -47,7 +47,6 @@ const storyStyles = () => {
       font-size: var(--ds-semantic-typography-body-small-font-size);
       font-weight: var(--ds-semantic-typography-body-small-font-weight-medium);
       line-height: var(--ds-semantic-typography-body-small-line-height);
-      letter-spacing: 0;
       text-decoration: none;
       cursor: pointer;
     }
@@ -232,7 +231,7 @@ const renderDropdown = (state) => {
     disabled: state.disabled,
     open: state.open,
   });
-  setStyles(element, dropdownStyles(state));
+  setStyles(element, actionMenuStyles(state));
 
   element.append(
     renderTrigger(state.trigger, state.open),
@@ -270,7 +269,7 @@ const sourceTrigger = (trigger = {}, open = false) =>
       ? `<button slot="trigger" type="button">\n${indent(
           [sourceIcon(undefined, trigger.name), sourceChevron(open)].join("\n"),
         )}\n</button>`
-      : `<button slot="trigger" type="button">${escapeHtml(trigger.label || "Account")} ${sourceChevron(open)}</button>`;
+    : `<button slot="trigger" type="button">${escapeHtml(trigger.label || "Account")} ${sourceChevron(open)}</button>`;
 
 const sourceHeader = (header) => `
 <drop-down-header>
@@ -330,7 +329,7 @@ const sourceDropdown = (state) => `
   "aria-label": state.ariaLabel,
   disabled: state.disabled,
   align: state.align,
-  style: sourceStyle(dropdownStyles(state)),
+  style: sourceStyle(actionMenuStyles(state)),
 })}>
 ${indent([sourceTrigger(state.trigger, state.open), ...contentParts(state).map(sourcePart)].join("\n"))}
 </drop-down>
@@ -339,6 +338,23 @@ ${indent([sourceTrigger(state.trigger, state.open), ...contentParts(state).map(s
 const dropdownParameters = (args, design) => ({
   ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
   docs: docsSource(sourceDropdown(args)),
+});
+
+const renderDropdownSet = (items) => {
+  const container = document.createElement("div");
+
+  container.style.display = "flex";
+  container.style.alignItems = "flex-start";
+  container.style.flexWrap = "wrap";
+  container.style.gap = "var(--ds-primitive-space-08)";
+  container.append(...items.map(renderDropdown));
+
+  return container;
+};
+
+const dropdownSetParameters = (items, design) => ({
+  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
+  docs: docsSource(`<div>\n${indent(items.map(sourceDropdown).join("\n"))}\n</div>`),
 });
 
 const account = {
@@ -455,35 +471,15 @@ const choiceContent = ({ kind, shortcuts = false }) => [
 ];
 
 const states = {
-  avatar: dropdown({
-    ariaLabel: "Account menu",
-    trigger: accountAvatar,
-  }),
-  avatarOpen: dropdown({
-    ariaLabel: "Account menu",
-    open: true,
-    trigger: accountAvatar,
-  }),
   button: dropdown(),
-  buttonOpen: dropdown({ open: true }),
-  checkbox: dropdown({ open: true, content: choiceContent({ kind: "checkbox" }) }),
-  checkboxShortcuts: dropdown({
-    open: true,
-    content: choiceContent({ kind: "checkbox", shortcuts: true }),
-  }),
-  icon: dropdown({
+  open: dropdown({ open: true }),
+  avatarTrigger: dropdown({
     ariaLabel: "Account menu",
-    trigger: { kind: "icon", name: "settings" },
+    trigger: accountAvatar,
   }),
-  iconOpen: dropdown({
-    ariaLabel: "Account menu",
-    open: true,
+  iconTrigger: dropdown({
+    ariaLabel: "Settings menu",
     trigger: { kind: "icon", name: "settings" },
-  }),
-  radio: dropdown({ open: true, content: choiceContent({ kind: "radio" }) }),
-  radioShortcuts: dropdown({
-    open: true,
-    content: choiceContent({ kind: "radio", shortcuts: true }),
   }),
   rich: dropdown({
     open: true,
@@ -515,36 +511,21 @@ const states = {
       },
     ],
   }),
-  shortcuts: dropdown({
-    open: true,
-    content: [
-      {
-        kind: "group",
-        items: [
-          { end: "⌘C", label: "Copy", value: "copy" },
-          { end: "⌘V", label: "Paste", value: "paste" },
-        ],
-      },
-      { kind: "separator" },
-      {
-        kind: "group",
-        items: [
-          {
-            checked: true,
-            end: "⌘B",
-            label: "Show toolbar",
-            type: "checkbox",
-            value: "toolbar",
-          },
-        ],
-      },
-    ],
-  }),
   withoutHeader: dropdown({ open: true, content: accountGroups }),
 };
 
+const triggerItems = [states.button, states.iconTrigger, states.avatarTrigger];
+
+const choiceItems = [
+  dropdown({ open: true, content: choiceContent({ kind: "radio" }) }),
+  dropdown({
+    open: true,
+    content: choiceContent({ kind: "checkbox", shortcuts: true }),
+  }),
+];
+
 const meta = {
-  title: "Dropdown",
+  title: "Action Menu",
   component: "drop-down",
   tags: ["autodocs"],
   render: renderDropdown,
@@ -567,44 +548,28 @@ const meta = {
 
 export default meta;
 
-export const Button = {
+export const Default = {
   args: states.button,
   parameters: dropdownParameters(states.button, "40020967:33101"),
 };
 
-export const ButtonOpen = {
-  args: states.buttonOpen,
-  parameters: dropdownParameters(states.buttonOpen, "40020967:33104"),
+export const Open = {
+  args: states.open,
+  parameters: dropdownParameters(states.open, "40020967:33104"),
 };
 
-export const Icon = {
-  args: states.icon,
-  parameters: dropdownParameters(states.icon, "40020967:33259"),
+export const CustomTriggers = {
+  args: { items: triggerItems },
+  render: ({ items }) => renderDropdownSet(items),
+  parameters: dropdownSetParameters(triggerItems, "40020967:33715"),
+  argTypes: {
+    items: { control: false, table: { disable: true } },
+  },
 };
 
-export const IconOpen = {
-  args: states.iconOpen,
-  parameters: dropdownParameters(states.iconOpen, "40020967:33356"),
-};
-
-export const Avatar = {
-  args: states.avatar,
-  parameters: dropdownParameters(states.avatar, "40020967:33715"),
-};
-
-export const AvatarOpen = {
-  args: states.avatarOpen,
-  parameters: dropdownParameters(states.avatarOpen, "40020967:33805"),
-};
-
-export const WithoutHeader = {
+export const GroupedItems = {
   args: states.withoutHeader,
   parameters: dropdownParameters(states.withoutHeader, "40020967:22605"),
-};
-
-export const WithShortcuts = {
-  args: states.shortcuts,
-  parameters: dropdownParameters(states.shortcuts, "40020967:23669"),
 };
 
 export const RichItems = {
@@ -612,22 +577,11 @@ export const RichItems = {
   parameters: dropdownParameters(states.rich),
 };
 
-export const RadioItems = {
-  args: states.radio,
-  parameters: dropdownParameters(states.radio, "40020967:17520"),
-};
-
-export const RadioItemsWithShortcuts = {
-  args: states.radioShortcuts,
-  parameters: dropdownParameters(states.radioShortcuts, "40020967:17523"),
-};
-
-export const CheckboxItems = {
-  args: states.checkbox,
-  parameters: dropdownParameters(states.checkbox, "40020967:17528"),
-};
-
-export const CheckboxItemsWithShortcuts = {
-  args: states.checkboxShortcuts,
-  parameters: dropdownParameters(states.checkboxShortcuts, "40020967:17531"),
+export const CheckableMenuItems = {
+  args: { items: choiceItems },
+  render: ({ items }) => renderDropdownSet(items),
+  parameters: dropdownSetParameters(choiceItems, "40020967:17520"),
+  argTypes: {
+    items: { control: false, table: { disable: true } },
+  },
 };

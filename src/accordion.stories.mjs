@@ -8,6 +8,7 @@ import {
   sourceAttributes,
   sourceStyle,
   setStyles,
+  staticStoryParameters,
 } from "./story-helpers.mjs";
 
 const accordionAttributes = (state) => ({
@@ -31,7 +32,7 @@ const renderAccordion = (state) => {
 
   setAttributes(element, accordionAttributes(state));
   setStyles(element, accordionStyles(state));
-  header.textContent = state.title || "Accordion 1";
+  header.textContent = state.title || "Accordion item";
   content.textContent = state.content || "";
   element.append(header, content);
 
@@ -57,7 +58,7 @@ const sourceAccordion = (state) => {
     style: sourceStyle(accordionStyles(state)),
   });
   const children = [
-    `<accordion-header>${escapeHtml(state.title || "Accordion 1")}</accordion-header>`,
+    `<accordion-header>${escapeHtml(state.title || "Accordion item")}</accordion-header>`,
     state.content &&
       `<accordion-content>${escapeHtml(state.content)}</accordion-content>`,
   ].filter(Boolean);
@@ -81,32 +82,32 @@ const accordionParameters = (args, design) => ({
 });
 
 const accordionCardParameters = (args, design) => ({
+  ...staticStoryParameters,
   ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
   docs: docsSource(sourceAccordionCard(args)),
 });
 
 const bodyText =
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus tempor lorem non est congue blandit. Praesent non lorem sodales, suscipit est sed, hendrerit dolor.";
+  "Use accordion panels for progressive disclosure when the section title can stand on its own and the body contains supporting text or controls.";
 
 const states = {
   default: {
-    title: "Accordion 1",
+    title: "Accordion item",
     content: bodyText,
   },
   disabled: {
-    title: "Accordion 1",
+    title: "Accordion item",
     content: bodyText,
     disabled: true,
   },
   expanded: {
-    title: "Accordion 1",
+    title: "Accordion item",
     content: bodyText,
     expanded: true,
   },
-  longContent: {
+  customContent: {
     title: "Billing and invoice settings",
-    content:
-      "Use accordion panels for progressive disclosure when the section title can stand on its own and the body contains supporting text or controls.",
+    content: bodyText,
     expanded: true,
     width: "420px",
   },
@@ -115,18 +116,17 @@ const states = {
     items: [
       {
         title: "Is it accessible?",
-        content: "Yes. It adheres to the WAI-ARIA design pattern.",
+        content: "Yes. It follows the disclosure pattern and manages expanded state.",
         expanded: true,
       },
       {
-        title: "Is it styled?",
+        title: "Can it contain controls?",
         content:
-          "Yes. It uses design-system tokens for spacing, color, radius, and shadow.",
+          "Yes. Use the content slot for supporting copy, controls, or composed markup.",
       },
       {
-        title: "Is it animated?",
-        content:
-          "Yes. The icon rotates between collapsed and expanded states.",
+        title: "Can multiple panels stay open?",
+        content: "Set multiple on accordion-card when the grouped behavior requires it.",
       },
     ],
   },
@@ -172,9 +172,9 @@ export const Disabled = {
   parameters: accordionParameters(states.disabled, "40002151:4271"),
 };
 
-export const LongContent = {
-  args: states.longContent,
-  parameters: accordionParameters(states.longContent),
+export const CustomContent = {
+  args: states.customContent,
+  parameters: accordionParameters(states.customContent),
 };
 
 export const Card = {

@@ -10,6 +10,10 @@ export const docsSource = (code) => ({
   source: { code: code.trim(), language: "html", type: "code" },
 });
 
+export const staticStoryParameters = {
+  controls: { disable: true },
+};
+
 export const figmaNodeUrl = (nodeId) =>
   `${figmaFileUrl}?node-id=${nodeId.replace(":", "-")}&m=dev`;
 

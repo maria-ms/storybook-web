@@ -9,10 +9,12 @@ import {
   setStyles,
   sourceAttributes,
   sourceStyle,
+  staticStoryParameters,
   textSlot,
 } from "./story-helpers.mjs";
 
 const alertAttributes = (state) => ({
+  live: state.live,
   tone: state.tone,
   size: state.size,
 });
@@ -76,36 +78,11 @@ const alertParameters = (args, design) => ({
 });
 
 const alert = (state = {}) => ({
-  actionLabel: "Button",
   description: "This is an alert description.",
   tone: "success",
   title: "Success",
   ...state,
 });
-
-const states = {
-  default: alert(),
-  error: alert({ title: "Error", tone: "error" }),
-  info: alert({ title: "Info", tone: "info" }),
-  medium: alert({ size: "medium" }),
-  noAction: alert({ actionLabel: "" }),
-  small: alert({ size: "small" }),
-  success: alert(),
-  warning: alert({ title: "Warning", tone: "warning" }),
-};
-
-const toneItems = [
-  { ...states.success, label: "Success" },
-  { ...states.info, label: "Info" },
-  { ...states.warning, label: "Warning" },
-  { ...states.error, label: "Error" },
-];
-
-const sizeItems = [
-  alert({ size: "large" }),
-  alert({ size: "medium" }),
-  alert({ size: "small" }),
-];
 
 const renderGroup = (items) => {
   const container = document.createElement("div");
@@ -123,9 +100,34 @@ const sourceGroup = (items) =>
   `<div>\n${indent(items.map(sourceAlert).join("\n"))}\n</div>`;
 
 const groupParameters = (items, design) => ({
+  ...staticStoryParameters,
   ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
   docs: docsSource(sourceGroup(items)),
 });
+
+const states = {
+  default: alert(),
+  urgent: alert({
+    live: "assertive",
+    tone: "error",
+    title: "Session expired",
+    description: "Sign in again to continue.",
+  }),
+  withAction: alert({ actionLabel: "Button" }),
+};
+
+const toneItems = [
+  alert(),
+  alert({ title: "Info", tone: "info" }),
+  alert({ title: "Warning", tone: "warning" }),
+  alert({ title: "Error", tone: "error" }),
+];
+
+const sizeItems = [
+  alert({ size: "large" }),
+  alert({ size: "medium" }),
+  alert({ size: "small" }),
+];
 
 const meta = {
   title: "Alert",
@@ -134,6 +136,10 @@ const meta = {
   render: renderAlert,
   args: states.default,
   argTypes: {
+    live: {
+      control: "select",
+      options: ["", "polite", "assertive"],
+    },
     size: {
       control: "select",
       options: ["", "large", "medium", "small"],
@@ -157,36 +163,6 @@ export const Default = {
   parameters: alertParameters(states.default, "40012630:1307"),
 };
 
-export const Info = {
-  args: states.info,
-  parameters: alertParameters(states.info, "40012630:1336"),
-};
-
-export const Warning = {
-  args: states.warning,
-  parameters: alertParameters(states.warning, "40012630:1365"),
-};
-
-export const Error = {
-  args: states.error,
-  parameters: alertParameters(states.error, "40012630:1394"),
-};
-
-export const Medium = {
-  args: states.medium,
-  parameters: alertParameters(states.medium, "40012630:1317"),
-};
-
-export const Small = {
-  args: states.small,
-  parameters: alertParameters(states.small, "40012630:1327"),
-};
-
-export const WithoutAction = {
-  args: states.noAction,
-  parameters: alertParameters(states.noAction, "40012630:1307"),
-};
-
 export const Tones = {
   args: { items: toneItems },
   render: ({ items }) => renderGroup(items),
@@ -203,4 +179,14 @@ export const Sizes = {
   argTypes: {
     items: { control: false, table: { disable: true } },
   },
+};
+
+export const WithAction = {
+  args: states.withAction,
+  parameters: alertParameters(states.withAction, "40012630:1307"),
+};
+
+export const UrgentLiveRegion = {
+  args: states.urgent,
+  parameters: alertParameters(states.urgent, "40012630:1307"),
 };
