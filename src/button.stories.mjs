@@ -106,9 +106,9 @@ const buttonParameters = (args, design) => ({
 
 const sourceForm = (state) => `
 <form>
-  <input-text type="email" name="email" value="isabel@example.com" required>
+  <ds-input-text type="email" name="email" value="isabel@example.com" required>
     <span slot="label">Email</span>
-  </input-text>
+  </ds-input-text>
 ${indent(sourceButton(state))}
 </form>
 `;
@@ -145,7 +145,7 @@ const formParameters = (args) => ({
 
 const renderForm = (state) => {
   const form = document.createElement("form");
-  const input = document.createElement("input-text");
+  const input = document.createElement("ds-input-text");
   const output = document.createElement("output");
 
   form.style.display = "grid";

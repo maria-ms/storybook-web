@@ -30,7 +30,7 @@ const inputAttributes = (state) => ({
 });
 
 const renderInput = (state) => {
-  const element = document.createElement("input-number");
+  const element = document.createElement("ds-input-number");
 
   setAttributes(element, inputAttributes(state));
   if (state.label) element.append(textSlot("label", state.label));
@@ -55,8 +55,8 @@ const sourceInput = (state) => {
   ].filter(Boolean);
 
   return children.length
-    ? `<input-number${attributes}>\n${indent(children.join("\n"))}\n</input-number>`
-    : `<input-number${attributes}></input-number>`;
+    ? `<ds-input-number${attributes}>\n${indent(children.join("\n"))}\n</ds-input-number>`
+    : `<ds-input-number${attributes}></ds-input-number>`;
 };
 
 const renderForm = (state) => {
@@ -145,7 +145,7 @@ const stateItems = [
 
 const meta = {
   title: "Input Number",
-  component: "input-number",
+  component: "ds-input-number",
   tags: ["autodocs"],
   render: renderInput,
   args: states.default,
@@ -211,7 +211,7 @@ export const Focused = {
   parameters: inputParameters(states.focused, "40020640:1986"),
   play: async ({ canvasElement }) => {
     canvasElement
-      .querySelector("input-number")
+      .querySelector("ds-input-number")
       ?.shadowRoot?.querySelector("input")
       ?.focus();
   },

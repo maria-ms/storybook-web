@@ -32,7 +32,7 @@ const inputAttributes = (state) => ({
 });
 
 const renderInput = (state) => {
-  const element = document.createElement("input-text");
+  const element = document.createElement("ds-input-text");
 
   setAttributes(element, inputAttributes(state));
   if (state.label) element.append(textSlot("label", state.label));
@@ -55,10 +55,10 @@ const sourceInput = (state) => {
   ].filter(Boolean);
 
   return children.length
-    ? `<input-text${sourceAttributes(inputAttributes(state))}>\n${indent(
+    ? `<ds-input-text${sourceAttributes(inputAttributes(state))}>\n${indent(
         children.join("\n"),
-      )}\n</input-text>`
-    : `<input-text${sourceAttributes(inputAttributes(state))}></input-text>`;
+      )}\n</ds-input-text>`
+    : `<ds-input-text${sourceAttributes(inputAttributes(state))}></ds-input-text>`;
 };
 
 const inputParameters = (args, design) => ({
@@ -126,7 +126,7 @@ const stateItems = [
 
 const meta = {
   title: "Input Text",
-  component: "input-text",
+  component: "ds-input-text",
   tags: ["autodocs"],
   render: renderInput,
   args: baseInput,

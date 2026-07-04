@@ -59,7 +59,7 @@ const optionNodes = (state) =>
     : state.options.map(renderOption);
 
 const renderInput = (state) => {
-  const element = document.createElement("input-select");
+  const element = document.createElement("ds-input-select");
 
   setAttributes(element, inputAttributes(state));
   if (state.label) element.append(textSlot("label", state.label));
@@ -108,9 +108,9 @@ const sourceInput = (state) => {
     ...sourceOptions(state),
   ].filter(Boolean);
 
-  return `<input-select${sourceAttributes(inputAttributes(state))}>\n${indent(
+  return `<ds-input-select${sourceAttributes(inputAttributes(state))}>\n${indent(
     children.join("\n"),
-  )}\n</input-select>`;
+  )}\n</ds-input-select>`;
 };
 
 const inputParameters = (args, design) => ({
@@ -231,7 +231,7 @@ const stateItems = [
 
 const meta = {
   title: "Input Select",
-  component: "input-select",
+  component: "ds-input-select",
   tags: ["autodocs"],
   render: renderInput,
   args: baseInput,

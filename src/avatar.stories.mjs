@@ -60,7 +60,7 @@ const mediaKind = (state) =>
 const imageAlt = (state) => state.imageAlt || state.ariaLabel || "Isabel Navarro";
 
 const renderAvatar = (state) => {
-  const element = document.createElement("user-avatar");
+  const element = document.createElement("ds-avatar");
 
   setAttributes(element, {
     initials: state.initials,
@@ -106,8 +106,8 @@ const sourceAvatar = (state) => {
   ].filter(Boolean);
 
   return children.length
-    ? `<user-avatar${attributes}>${children.join("")}</user-avatar>`
-    : `<user-avatar${attributes}></user-avatar>`;
+    ? `<ds-avatar${attributes}>${children.join("")}</ds-avatar>`
+    : `<ds-avatar${attributes}></ds-avatar>`;
 };
 
 const avatarParameters = (args) => ({
@@ -170,7 +170,7 @@ const sizeItems = ["xs", "sm", "md", "lg", "xl", "2xl"].map((size) => ({
 
 const meta = {
   title: "Avatar",
-  component: "user-avatar",
+  component: "ds-avatar",
   tags: ["autodocs"],
   render: renderAvatar,
   args: states.default,

@@ -26,7 +26,7 @@ const inputAttributes = (state) => ({
 });
 
 const renderInput = (state) => {
-  const element = document.createElement("input-otp");
+  const element = document.createElement("ds-input-otp");
 
   setAttributes(element, inputAttributes(state));
   if (state.label) element.append(textSlot("label", state.label));
@@ -43,10 +43,10 @@ const sourceInput = (state) => {
   ].filter(Boolean);
 
   return children.length
-    ? `<input-otp${sourceAttributes(inputAttributes(state))}>\n${indent(
+    ? `<ds-input-otp${sourceAttributes(inputAttributes(state))}>\n${indent(
         children.join("\n"),
-      )}\n</input-otp>`
-    : `<input-otp${sourceAttributes(inputAttributes(state))}></input-otp>`;
+      )}\n</ds-input-otp>`
+    : `<ds-input-otp${sourceAttributes(inputAttributes(state))}></ds-input-otp>`;
 };
 
 const inputParameters = (args, design) => ({
@@ -114,7 +114,7 @@ const stateItems = [
 
 const meta = {
   title: "Input OTP",
-  component: "input-otp",
+  component: "ds-input-otp",
   tags: ["autodocs"],
   render: renderInput,
   args: baseInput,

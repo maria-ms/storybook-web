@@ -23,7 +23,7 @@ const contentParts = (state) => (Array.isArray(state.content) ? state.content : 
 const groupItems = (group) => (Array.isArray(group.items) ? group.items : []);
 
 const actionMenuStyles = (state) => ({
-  ...(state.width ? { "--dropdown-menu-width": state.width } : {}),
+  ...(state.width ? { "--ds-dropdown-menu-width": state.width } : {}),
 });
 
 const storyStyles = () => {
@@ -60,7 +60,7 @@ const storyStyles = () => {
     }
 
     .dropdown-story-trigger:focus-visible,
-    drop-down[open] > .dropdown-story-trigger {
+    ds-dropdown[open] > .dropdown-story-trigger {
       outline: 0;
       box-shadow:
         var(--ds-semantic-shadow-xs-offset-x)
@@ -113,7 +113,7 @@ const avatarMedia = ({ alt }) => {
 };
 
 const renderAvatar = (slot, avatar = {}) => {
-  const element = document.createElement("user-avatar");
+  const element = document.createElement("ds-avatar");
 
   setAttributes(element, {
     slot,
@@ -166,7 +166,7 @@ const renderTrigger = (trigger = {}, open = false) => {
 };
 
 const renderHeader = (header) => {
-  const element = document.createElement("drop-down-header");
+  const element = document.createElement("ds-dropdown-header");
 
   if (header.media) element.append(renderAvatar("media", header.media));
   if (header.title) element.append(textSlot("title", header.title));
@@ -178,7 +178,7 @@ const renderHeader = (header) => {
 };
 
 const renderItem = (item) => {
-  const element = document.createElement("drop-down-item");
+  const element = document.createElement("ds-dropdown-item");
 
   setAttributes(element, {
     checked: item.checked,
@@ -206,7 +206,7 @@ const renderItem = (item) => {
 };
 
 const renderGroup = (group) => {
-  const element = document.createElement("drop-down-group");
+  const element = document.createElement("ds-dropdown-group");
 
   setAttributes(element, { label: group.label });
   element.append(...groupItems(group).map(renderItem));
@@ -218,12 +218,12 @@ const renderPart = (part) =>
   part.kind === "header"
     ? renderHeader(part)
     : part.kind === "separator"
-      ? document.createElement("drop-down-separator")
+      ? document.createElement("ds-dropdown-separator")
       : renderGroup(part);
 
 const renderDropdown = (state) => {
   const container = document.createElement("div");
-  const element = document.createElement("drop-down");
+  const element = document.createElement("ds-dropdown");
 
   setAttributes(element, {
     align: state.align,
@@ -246,7 +246,7 @@ const sourceIcon = (slot, name) =>
   `<svg${sourceAttributes({ slot, "aria-hidden": "true" })}><!-- ${iconLabel(name)} icon --></svg>`;
 
 const sourceAvatar = (slot, avatar = {}) =>
-  `<user-avatar${sourceAttributes({
+  `<ds-avatar${sourceAttributes({
     slot,
     initials: avatar.initials,
     size: avatar.size,
@@ -257,7 +257,7 @@ const sourceAvatar = (slot, avatar = {}) =>
   <img src="/avatar.jpg" alt="${escapeHtml(avatar.media.alt)}" />
 `
       : ""
-  }</user-avatar>`;
+  }</ds-avatar>`;
 
 const sourceChevron = (open) =>
   `<svg aria-hidden="true"><!-- chevron-${open ? "up" : "down"} icon --></svg>`;
@@ -272,7 +272,7 @@ const sourceTrigger = (trigger = {}, open = false) =>
     : `<button slot="trigger" type="button">${escapeHtml(trigger.label || "Account")} ${sourceChevron(open)}</button>`;
 
 const sourceHeader = (header) => `
-<drop-down-header>
+<ds-dropdown-header>
 ${indent(
   [
     header.media && sourceAvatar("media", header.media),
@@ -283,7 +283,7 @@ ${indent(
     .filter(Boolean)
     .join("\n"),
 )}
-</drop-down-header>
+</ds-dropdown-header>
 `;
 
 const sourceItem = (item) => {
@@ -307,24 +307,24 @@ const sourceItem = (item) => {
     item.end && `<span slot="end">${escapeHtml(item.end)}</span>`,
   ].filter(Boolean);
 
-  return `<drop-down-item${attributes}>\n${indent(children.join("\n"))}\n</drop-down-item>`;
+  return `<ds-dropdown-item${attributes}>\n${indent(children.join("\n"))}\n</ds-dropdown-item>`;
 };
 
 const sourceGroup = (group) => `
-<drop-down-group${sourceAttributes({ label: group.label })}>
+<ds-dropdown-group${sourceAttributes({ label: group.label })}>
 ${indent(groupItems(group).map(sourceItem).join("\n"))}
-</drop-down-group>
+</ds-dropdown-group>
 `;
 
 const sourcePart = (part) =>
   part.kind === "header"
     ? sourceHeader(part)
     : part.kind === "separator"
-      ? "<drop-down-separator></drop-down-separator>"
+      ? "<ds-dropdown-separator></ds-dropdown-separator>"
       : sourceGroup(part);
 
 const sourceDropdown = (state) => `
-<drop-down${sourceAttributes({
+<ds-dropdown${sourceAttributes({
   open: state.open,
   "aria-label": state.ariaLabel,
   disabled: state.disabled,
@@ -332,7 +332,7 @@ const sourceDropdown = (state) => `
   style: sourceStyle(actionMenuStyles(state)),
 })}>
 ${indent([sourceTrigger(state.trigger, state.open), ...contentParts(state).map(sourcePart)].join("\n"))}
-</drop-down>
+</ds-dropdown>
 `;
 
 const dropdownParameters = (args, design) => ({
@@ -526,7 +526,7 @@ const choiceItems = [
 
 const meta = {
   title: "Action Menu",
-  component: "drop-down",
+  component: "ds-dropdown",
   tags: ["autodocs"],
   render: renderDropdown,
   args: states.button,
@@ -537,7 +537,7 @@ const meta = {
     open: { control: "boolean" },
     width: {
       control: "text",
-      name: "--dropdown-menu-width",
+      name: "--ds-dropdown-menu-width",
       table: { category: "CSS custom properties" },
     },
     content: { control: false, table: { disable: true } },

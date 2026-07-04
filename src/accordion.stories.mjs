@@ -18,17 +18,17 @@ const accordionAttributes = (state) => ({
 });
 
 const accordionStyles = (state) => ({
-  ...(state.width ? { "--accordion-width": state.width } : {}),
+  ...(state.width ? { "--ds-accordion-width": state.width } : {}),
 });
 
 const accordionCardStyles = (state) => ({
-  ...(state.width ? { "--accordion-card-width": state.width } : {}),
+  ...(state.width ? { "--ds-accordion-width": state.width } : {}),
 });
 
 const renderAccordion = (state) => {
-  const element = document.createElement("accordion-item");
-  const header = document.createElement("accordion-header");
-  const content = document.createElement("accordion-content");
+  const element = document.createElement("ds-accordion-item");
+  const header = document.createElement("ds-accordion-header");
+  const content = document.createElement("ds-accordion-content");
 
   setAttributes(element, accordionAttributes(state));
   setStyles(element, accordionStyles(state));
@@ -40,7 +40,7 @@ const renderAccordion = (state) => {
 };
 
 const renderAccordionCard = (state) => {
-  const element = document.createElement("accordion-card");
+  const element = document.createElement("ds-accordion");
 
   setAttributes(element, {
     "aria-label": state.ariaLabel,
@@ -58,12 +58,12 @@ const sourceAccordion = (state) => {
     style: sourceStyle(accordionStyles(state)),
   });
   const children = [
-    `<accordion-header>${escapeHtml(state.title || "Accordion item")}</accordion-header>`,
+    `<ds-accordion-header>${escapeHtml(state.title || "Accordion item")}</ds-accordion-header>`,
     state.content &&
-      `<accordion-content>${escapeHtml(state.content)}</accordion-content>`,
+      `<ds-accordion-content>${escapeHtml(state.content)}</ds-accordion-content>`,
   ].filter(Boolean);
 
-  return `<accordion-item${attributes}>\n${indent(children.join("\n"))}\n</accordion-item>`;
+  return `<ds-accordion-item${attributes}>\n${indent(children.join("\n"))}\n</ds-accordion-item>`;
 };
 
 const sourceAccordionCard = (state) => {
@@ -73,7 +73,7 @@ const sourceAccordionCard = (state) => {
     style: sourceStyle(accordionCardStyles(state)),
   });
 
-  return `<accordion-card${attributes}>\n${indent(state.items.map(sourceAccordion).join("\n"))}\n</accordion-card>`;
+  return `<ds-accordion${attributes}>\n${indent(state.items.map(sourceAccordion).join("\n"))}\n</ds-accordion>`;
 };
 
 const accordionParameters = (args, design) => ({
@@ -126,7 +126,7 @@ const states = {
       },
       {
         title: "Can multiple panels stay open?",
-        content: "Set multiple on accordion-card when the grouped behavior requires it.",
+        content: "Set multiple on ds-accordion when the grouped behavior requires it.",
       },
     ],
   },
@@ -134,7 +134,7 @@ const states = {
 
 const meta = {
   title: "Accordion",
-  component: "accordion-item",
+  component: "ds-accordion-item",
   tags: ["autodocs"],
   render: renderAccordion,
   args: states.default,
@@ -144,7 +144,7 @@ const meta = {
     expanded: { control: "boolean" },
     width: {
       control: "text",
-      name: "--accordion-width",
+      name: "--ds-accordion-width",
       table: { category: "CSS custom properties" },
     },
     content: { control: false, table: { disable: true } },

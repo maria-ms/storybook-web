@@ -26,7 +26,7 @@ const inputAttributes = (state) => ({
 });
 
 const renderInput = (state) => {
-  const element = document.createElement("input-search");
+  const element = document.createElement("ds-input-search");
 
   setAttributes(element, inputAttributes(state));
   if (state.label) element.append(textSlot("label", state.label));
@@ -49,10 +49,10 @@ const sourceInput = (state) => {
   ].filter(Boolean);
 
   return children.length
-    ? `<input-search${sourceAttributes(inputAttributes(state))}>\n${indent(
+    ? `<ds-input-search${sourceAttributes(inputAttributes(state))}>\n${indent(
         children.join("\n"),
-      )}\n</input-search>`
-    : `<input-search${sourceAttributes(inputAttributes(state))}></input-search>`;
+      )}\n</ds-input-search>`
+    : `<ds-input-search${sourceAttributes(inputAttributes(state))}></ds-input-search>`;
 };
 
 const inputParameters = (args, design) => ({
@@ -119,7 +119,7 @@ const stateItems = [
 
 const meta = {
   title: "Input Search",
-  component: "input-search",
+  component: "ds-input-search",
   tags: ["autodocs"],
   render: renderInput,
   args: baseInput,
