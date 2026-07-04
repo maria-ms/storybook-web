@@ -1,5 +1,7 @@
 import "@maria-ms/components-web/button";
+import "@maria-ms/components-web/field";
 import "@maria-ms/components-web/input-number";
+import "@maria-ms/components-web/input-select";
 import { icon } from "./icons.mjs";
 import {
   docsSource,
@@ -115,6 +117,83 @@ const groupParameters = (items, design) => ({
   docs: docsSource(`<div>\n${indent(items.map(sourceInput).join("\n"))}\n</div>`),
 });
 
+const currencyOptions = [
+  { label: "EUR", value: "eur" },
+  { label: "USD", value: "usd" },
+  { label: "GBP", value: "gbp" },
+];
+
+const renderOption = ({ label, value }) => {
+  const option = document.createElement("option");
+
+  option.value = value;
+  option.textContent = label;
+
+  return option;
+};
+
+const renderCurrencyInput = (state) => {
+  const group = document.createElement("ds-field-group");
+  const select = document.createElement("ds-input-select");
+  const number = document.createElement("ds-input-number");
+
+  group.append(
+    textSlot("label", state.label),
+    select,
+    number,
+    textSlot("description", state.description),
+  );
+  setAttributes(select, {
+    "aria-label": "Currency",
+    name: state.currencyName,
+    value: state.currency,
+  });
+  select.append(...currencyOptions.map(renderOption));
+  setAttributes(number, {
+    "aria-label": "Amount",
+    controls: "none",
+    min: "0",
+    name: state.amountName,
+    step: "0.01",
+    value: state.amount,
+  });
+
+  return group;
+};
+
+const sourceCurrencyInput = (state) => `
+<ds-field-group>
+  <span slot="label">${escapeHtml(state.label)}</span>
+  <ds-input-select name="${escapeHtml(state.currencyName)}" value="${escapeHtml(
+    state.currency,
+  )}" aria-label="Currency">
+${indent(
+  currencyOptions
+    .map(
+      (option) =>
+        `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`,
+    )
+    .join("\n"),
+)}
+  </ds-input-select>
+  <ds-input-number
+    name="${escapeHtml(state.amountName)}"
+    value="${escapeHtml(state.amount)}"
+    min="0"
+    step="0.01"
+    controls="none"
+    aria-label="Amount"
+  ></ds-input-number>
+  <span slot="description">${escapeHtml(state.description)}</span>
+</ds-field-group>
+`;
+
+const currencyParameters = (args, design) => ({
+  ...staticStoryParameters,
+  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
+  docs: docsSource(sourceCurrencyInput(args)),
+});
+
 const baseInput = {
   label: "Label",
   description: "This is an input description",
@@ -134,6 +213,14 @@ const states = {
     controls: "none",
     suffixIcon: "visa",
     value: "1000",
+  },
+  currency: {
+    amount: "1250",
+    amountName: "amount",
+    currency: "eur",
+    currencyName: "currency",
+    description: "Enter the amount before tax.",
+    label: "Amount",
   },
 };
 
@@ -204,6 +291,12 @@ export const HorizontalLabel = {
 export const WithSuffix = {
   args: states.suffix,
   parameters: inputParameters(states.suffix, "40020640:2249"),
+};
+
+export const Currency = {
+  args: states.currency,
+  render: renderCurrencyInput,
+  parameters: currencyParameters(states.currency, "40020967:14091"),
 };
 
 export const Focused = {
