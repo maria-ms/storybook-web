@@ -1,4 +1,4 @@
-import "@maria-ms/components-web";
+import "@maria-ms/components-web/accordion";
 import {
   docsSource,
   escapeHtml,

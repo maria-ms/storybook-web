@@ -1,4 +1,5 @@
-import "@maria-ms/components-web";
+import "@maria-ms/components-web/alert";
+import "@maria-ms/components-web/button";
 import {
   docsSource,
   escapeHtml,
