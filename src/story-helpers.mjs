@@ -17,6 +17,16 @@ export const staticStoryParameters = {
 export const figmaNodeUrl = (nodeId) =>
   `${figmaFileUrl}?node-id=${nodeId.replace(":", "-")}&m=dev`;
 
+export const storyParameters = (source, design) => ({
+  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
+  docs: docsSource(source),
+});
+
+export const staticStoryParametersFor = (source, design) => ({
+  ...staticStoryParameters,
+  ...storyParameters(source, design),
+});
+
 export const escapeHtml = (value) =>
   String(value)
     .replaceAll("&", "&amp;")
@@ -52,6 +62,59 @@ export const setAttributes = (element, attributes) => {
 export const setStyles = (element, styles) => {
   entries(styles).forEach(([name, value]) => element.style.setProperty(name, value));
 };
+
+export const renderStoryGroup = (
+  items,
+  renderItem,
+  {
+    alignItems = "flex-start",
+    direction = "row",
+    gap = "var(--ds-primitive-space-06)",
+    wrap = true,
+  } = {},
+) => {
+  const container = document.createElement("div");
+
+  container.style.display = "flex";
+  container.style.alignItems = alignItems;
+  container.style.flexDirection = direction;
+  container.style.gap = gap;
+  if (wrap) container.style.flexWrap = "wrap";
+  container.append(...items.map(renderItem));
+
+  return container;
+};
+
+export const sourceStoryGroup = (items, sourceItem) =>
+  `<div>\n${indent(items.map(sourceItem).join("\n"))}\n</div>`;
+
+export const renderSubmitForm = (control, { width } = {}) => {
+  const form = document.createElement("form");
+  const button = document.createElement("ds-button");
+  const output = document.createElement("output");
+
+  button.type = "submit";
+  button.textContent = "Submit";
+  output.setAttribute("aria-live", "polite");
+  form.style.display = "grid";
+  form.style.gap = "var(--ds-primitive-space-04)";
+  if (width) form.style.width = width;
+  form.append(control, button, output);
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    output.value = new URLSearchParams(new FormData(form)).toString();
+  });
+
+  return form;
+};
+
+export const sourceSubmitForm = (control, { style } = {}) => `
+<form${sourceAttributes({ style })}>
+${indent(control)}
+  <ds-button type="submit">Submit</ds-button>
+  <output></output>
+</form>
+`;
 
 export const textSlot = (slot, text) => {
   const element = document.createElement("span");

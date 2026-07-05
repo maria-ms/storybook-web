@@ -2,14 +2,15 @@ import "@maria-ms/components-web/avatar";
 import "@maria-ms/components-web/dropdown";
 import { icon } from "./icons.mjs";
 import {
-  docsSource,
   escapeHtml,
-  figmaNodeUrl,
   indent,
+  renderStoryGroup,
   setAttributes,
   sourceAttributes,
+  sourceStoryGroup,
   sourceStyle,
   setStyles,
+  storyParameters,
   textSlot,
 } from "./story-helpers.mjs";
 
@@ -336,25 +337,14 @@ ${indent([sourceTrigger(state.trigger, state.open), ...contentParts(state).map(s
 `;
 
 const dropdownParameters = (args, design) => ({
-  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-  docs: docsSource(sourceDropdown(args)),
+  ...storyParameters(sourceDropdown(args), design),
 });
 
-const renderDropdownSet = (items) => {
-  const container = document.createElement("div");
-
-  container.style.display = "flex";
-  container.style.alignItems = "flex-start";
-  container.style.flexWrap = "wrap";
-  container.style.gap = "var(--ds-primitive-space-08)";
-  container.append(...items.map(renderDropdown));
-
-  return container;
-};
+const renderDropdownSet = (items) =>
+  renderStoryGroup(items, renderDropdown, { gap: "var(--ds-primitive-space-08)" });
 
 const dropdownSetParameters = (items, design) => ({
-  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-  docs: docsSource(`<div>\n${indent(items.map(sourceDropdown).join("\n"))}\n</div>`),
+  ...storyParameters(sourceStoryGroup(items, sourceDropdown), design),
 });
 
 const account = {

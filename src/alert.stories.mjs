@@ -1,15 +1,16 @@
 import "@maria-ms/components-web/alert";
 import "@maria-ms/components-web/button";
 import {
-  docsSource,
   escapeHtml,
-  figmaNodeUrl,
   indent,
+  renderStoryGroup,
   setAttributes,
   setStyles,
   sourceAttributes,
+  sourceStoryGroup,
   sourceStyle,
-  staticStoryParameters,
+  staticStoryParametersFor,
+  storyParameters,
   textSlot,
 } from "./story-helpers.mjs";
 
@@ -73,8 +74,7 @@ const sourceAlert = (state) => {
 };
 
 const alertParameters = (args, design) => ({
-  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-  docs: docsSource(sourceAlert(args)),
+  ...storyParameters(sourceAlert(args), design),
 });
 
 const alert = (state = {}) => ({
@@ -84,25 +84,15 @@ const alert = (state = {}) => ({
   ...state,
 });
 
-const renderGroup = (items) => {
-  const container = document.createElement("div");
-
-  container.style.display = "flex";
-  container.style.alignItems = "flex-start";
-  container.style.flexDirection = "column";
-  container.style.gap = "var(--ds-primitive-space-05)";
-  container.append(...items.map(renderAlert));
-
-  return container;
-};
-
-const sourceGroup = (items) =>
-  `<div>\n${indent(items.map(sourceAlert).join("\n"))}\n</div>`;
+const renderGroup = (items) =>
+  renderStoryGroup(items, renderAlert, {
+    direction: "column",
+    gap: "var(--ds-primitive-space-05)",
+    wrap: false,
+  });
 
 const groupParameters = (items, design) => ({
-  ...staticStoryParameters,
-  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-  docs: docsSource(sourceGroup(items)),
+  ...staticStoryParametersFor(sourceStoryGroup(items, sourceAlert), design),
 });
 
 const states = {

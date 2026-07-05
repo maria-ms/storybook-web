@@ -1,14 +1,13 @@
 import "@maria-ms/components-web/accordion";
 import {
-  docsSource,
   escapeHtml,
-  figmaNodeUrl,
   indent,
   setAttributes,
   sourceAttributes,
   sourceStyle,
   setStyles,
-  staticStoryParameters,
+  staticStoryParametersFor,
+  storyParameters,
 } from "./story-helpers.mjs";
 
 const accordionAttributes = (state) => ({
@@ -77,14 +76,11 @@ const sourceAccordionCard = (state) => {
 };
 
 const accordionParameters = (args, design) => ({
-  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-  docs: docsSource(sourceAccordion(args)),
+  ...storyParameters(sourceAccordion(args), design),
 });
 
 const accordionCardParameters = (args, design) => ({
-  ...staticStoryParameters,
-  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-  docs: docsSource(sourceAccordionCard(args)),
+  ...staticStoryParametersFor(sourceAccordionCard(args), design),
 });
 
 const bodyText =

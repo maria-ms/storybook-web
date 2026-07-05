@@ -2,13 +2,16 @@ import "@maria-ms/components-web/button";
 import "@maria-ms/components-web/input-text";
 import { icon } from "./icons.mjs";
 import {
-  docsSource,
   escapeHtml,
-  figmaNodeUrl,
   indent,
+  renderStoryGroup,
+  renderSubmitForm,
   setAttributes,
   sourceAttributes,
-  staticStoryParameters,
+  sourceStoryGroup,
+  sourceSubmitForm,
+  staticStoryParametersFor,
+  storyParameters,
   textSlot,
 } from "./story-helpers.mjs";
 
@@ -62,54 +65,18 @@ const sourceInput = (state) => {
 };
 
 const inputParameters = (args, design) => ({
-  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-  docs: docsSource(sourceInput(args)),
+  ...storyParameters(sourceInput(args), design),
 });
 
-const renderGroup = ({ items }) => {
-  const container = document.createElement("div");
-
-  container.style.display = "flex";
-  container.style.alignItems = "flex-start";
-  container.style.flexWrap = "wrap";
-  container.style.gap = "var(--ds-primitive-space-06)";
-  container.append(...items.map(renderInput));
-
-  return container;
-};
+const renderGroup = ({ items }) => renderStoryGroup(items, renderInput);
 
 const groupParameters = (items, design) => ({
-  ...staticStoryParameters,
-  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-  docs: docsSource(`<div>\n${indent(items.map(sourceInput).join("\n"))}\n</div>`),
+  ...staticStoryParametersFor(sourceStoryGroup(items, sourceInput), design),
 });
 
-const renderForm = (state) => {
-  const form = document.createElement("form");
-  const button = document.createElement("ds-button");
-  const output = document.createElement("output");
+const renderForm = (state) => renderSubmitForm(renderInput(state));
 
-  button.type = "submit";
-  button.textContent = "Submit";
-  output.setAttribute("aria-live", "polite");
-  form.style.display = "grid";
-  form.style.gap = "var(--ds-primitive-space-04)";
-  form.append(renderInput(state), button, output);
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    output.value = new URLSearchParams(new FormData(form)).toString();
-  });
-
-  return form;
-};
-
-const sourceForm = (state) => `
-<form>
-${indent(sourceInput(state))}
-  <ds-button type="submit">Submit</ds-button>
-  <output></output>
-</form>
-`;
+const sourceForm = (state) => sourceSubmitForm(sourceInput(state));
 
 const baseInput = {
   label: "Label",
@@ -197,6 +164,8 @@ export const Form = {
   args: { ...baseInput, name: "email", type: "email", required: true },
   render: renderForm,
   parameters: {
-    docs: docsSource(sourceForm({ ...baseInput, name: "email", type: "email", required: true })),
+    ...storyParameters(
+      sourceForm({ ...baseInput, name: "email", type: "email", required: true }),
+    ),
   },
 };

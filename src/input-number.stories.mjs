@@ -4,13 +4,16 @@ import "@maria-ms/components-web/input-number";
 import "@maria-ms/components-web/input-select";
 import { icon } from "./icons.mjs";
 import {
-  docsSource,
   escapeHtml,
-  figmaNodeUrl,
   indent,
+  renderStoryGroup,
+  renderSubmitForm,
   setAttributes,
   sourceAttributes,
-  staticStoryParameters,
+  sourceStoryGroup,
+  sourceSubmitForm,
+  staticStoryParametersFor,
+  storyParameters,
   textSlot,
 } from "./story-helpers.mjs";
 
@@ -61,60 +64,26 @@ const sourceInput = (state) => {
     : `<ds-input-number${attributes}></ds-input-number>`;
 };
 
-const renderForm = (state) => {
-  const form = document.createElement("form");
-  const button = document.createElement("ds-button");
-  const output = document.createElement("output");
+const renderForm = (state) =>
+  renderSubmitForm(renderInput(state), { width: "min(100%, 276px)" });
 
-  form.style.display = "grid";
-  form.style.width = "min(100%, 276px)";
-  form.style.gap = "var(--ds-primitive-space-04)";
-  button.type = "submit";
-  button.textContent = "Submit";
-  output.setAttribute("aria-live", "polite");
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    output.value = new URLSearchParams(new FormData(form)).toString();
+const sourceForm = (state) =>
+  sourceSubmitForm(sourceInput(state), {
+    style: "display: grid; gap: var(--ds-primitive-space-04); width: min(100%, 276px);",
   });
-  form.append(renderInput(state), button, output);
-
-  return form;
-};
-
-const sourceForm = (state) => `
-<form style="display: grid; gap: var(--ds-primitive-space-04); width: min(100%, 276px);">
-${indent(sourceInput(state))}
-  <ds-button type="submit">Submit</ds-button>
-  <output></output>
-</form>
-`;
 
 const inputParameters = (args, design) => ({
-  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-  docs: docsSource(sourceInput(args)),
+  ...storyParameters(sourceInput(args), design),
 });
 
 const formParameters = (args, design) => ({
-  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-  docs: docsSource(sourceForm(args)),
+  ...storyParameters(sourceForm(args), design),
 });
 
-const renderGroup = (items) => {
-  const container = document.createElement("div");
-
-  container.style.display = "flex";
-  container.style.alignItems = "flex-start";
-  container.style.flexWrap = "wrap";
-  container.style.gap = "var(--ds-primitive-space-06)";
-  container.append(...items.map(renderInput));
-
-  return container;
-};
+const renderGroup = (items) => renderStoryGroup(items, renderInput);
 
 const groupParameters = (items, design) => ({
-  ...staticStoryParameters,
-  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-  docs: docsSource(`<div>\n${indent(items.map(sourceInput).join("\n"))}\n</div>`),
+  ...staticStoryParametersFor(sourceStoryGroup(items, sourceInput), design),
 });
 
 const currencyOptions = [
@@ -189,9 +158,7 @@ ${indent(
 `;
 
 const currencyParameters = (args, design) => ({
-  ...staticStoryParameters,
-  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-  docs: docsSource(sourceCurrencyInput(args)),
+  ...staticStoryParametersFor(sourceCurrencyInput(args), design),
 });
 
 const baseInput = {

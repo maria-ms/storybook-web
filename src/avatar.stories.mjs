@@ -1,11 +1,12 @@
 import "@maria-ms/components-web/avatar";
 import {
-  docsSource,
   escapeHtml,
-  indent,
+  renderStoryGroup,
   setAttributes,
   sourceAttributes,
-  staticStoryParameters,
+  sourceStoryGroup,
+  staticStoryParametersFor,
+  storyParameters,
 } from "./story-helpers.mjs";
 
 const avatarSvg = encodeURIComponent(`
@@ -111,24 +112,17 @@ const sourceAvatar = (state) => {
 };
 
 const avatarParameters = (args) => ({
-  docs: docsSource(sourceAvatar(args)),
+  ...storyParameters(sourceAvatar(args)),
 });
 
-const renderGroup = (items) => {
-  const container = document.createElement("div");
-
-  container.style.display = "flex";
-  container.style.alignItems = "center";
-  container.style.flexWrap = "wrap";
-  container.style.gap = "var(--ds-primitive-space-05)";
-  container.append(...items.map(renderAvatar));
-
-  return container;
-};
+const renderGroup = (items) =>
+  renderStoryGroup(items, renderAvatar, {
+    alignItems: "center",
+    gap: "var(--ds-primitive-space-05)",
+  });
 
 const groupParameters = (items) => ({
-  ...staticStoryParameters,
-  docs: docsSource(`<div>\n${indent(items.map(sourceAvatar).join("\n"))}\n</div>`),
+  ...staticStoryParametersFor(sourceStoryGroup(items, sourceAvatar)),
 });
 
 const states = {

@@ -1,15 +1,16 @@
 import "@maria-ms/components-web/button";
 import "@maria-ms/components-web/input-text";
 import {
-  docsSource,
   escapeHtml,
-  figmaNodeUrl,
   indent,
+  renderStoryGroup,
   setAttributes,
   setStyles,
   sourceAttributes,
+  sourceStoryGroup,
   sourceStyle,
-  staticStoryParameters,
+  staticStoryParametersFor,
+  storyParameters,
   textSlot,
 } from "./story-helpers.mjs";
 
@@ -100,8 +101,7 @@ const sourceButton = (state) => {
 };
 
 const buttonParameters = (args, design) => ({
-  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-  docs: docsSource(sourceButton(args)),
+  ...storyParameters(sourceButton(args), design),
 });
 
 const sourceForm = (state) => `
@@ -118,29 +118,18 @@ const button = (state = {}) => ({
   ...state,
 });
 
-const renderGroup = (items) => {
-  const container = document.createElement("div");
-
-  container.style.display = "flex";
-  container.style.alignItems = "center";
-  container.style.flexWrap = "wrap";
-  container.style.gap = "var(--ds-primitive-space-04)";
-  container.append(...items.map(renderButton));
-
-  return container;
-};
-
-const sourceGroup = (items) =>
-  `<div>\n${indent(items.map(sourceButton).join("\n"))}\n</div>`;
+const renderGroup = (items) =>
+  renderStoryGroup(items, renderButton, {
+    alignItems: "center",
+    gap: "var(--ds-primitive-space-04)",
+  });
 
 const groupParameters = (items, design) => ({
-  ...staticStoryParameters,
-  ...(design && { design: { type: "figma", url: figmaNodeUrl(design) } }),
-  docs: docsSource(sourceGroup(items)),
+  ...staticStoryParametersFor(sourceStoryGroup(items, sourceButton), design),
 });
 
 const formParameters = (args) => ({
-  docs: docsSource(sourceForm(args)),
+  ...storyParameters(sourceForm(args)),
 });
 
 const renderForm = (state) => {
