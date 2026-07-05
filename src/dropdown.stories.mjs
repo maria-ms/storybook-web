@@ -525,11 +525,7 @@ const meta = {
     ariaLabel: { control: "text", name: "aria-label" },
     disabled: { control: "boolean" },
     open: { control: "boolean" },
-    width: {
-      control: "text",
-      name: "--ds-dropdown-menu-width",
-      table: { category: "CSS custom properties" },
-    },
+    width: { control: false, table: { disable: true } },
     content: { control: false, table: { disable: true } },
     trigger: { control: false, table: { disable: true } },
   },

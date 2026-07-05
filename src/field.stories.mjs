@@ -7,6 +7,7 @@ import {
   escapeHtml,
   indent,
   sourceAttributes,
+  sourceStyle,
   sourceSubmitForm,
   staticStoryParametersFor,
   storyParameters,
@@ -25,10 +26,12 @@ const field = ({
   error = "This field needs your attention.",
   invalid = false,
   label = "Label",
+  width = "276px",
 } = {}) => {
   const element = document.createElement("ds-field");
 
   element.invalid = invalid;
+  element.style.width = width;
   element.append(textSlot("label", label), control);
   if (description) element.append(textSlot("description", description));
   if (error) element.append(textSlot("error", error));
@@ -60,7 +63,11 @@ const fieldSource = ({
   error = "This field needs your attention.",
   invalid = false,
   label = "Label",
-} = {}) => `<ds-field${sourceAttributes({ invalid })}>
+  width = "276px",
+} = {}) => `<ds-field${sourceAttributes({
+  invalid,
+  style: sourceStyle({ width }),
+})}>
   <span slot="label">${escapeHtml(label)}</span>
 ${indent(control)}
   <span slot="description">${escapeHtml(description)}</span>
@@ -73,8 +80,13 @@ const group = ({ invalid = false } = {}) => {
   const amount = document.createElement("ds-input-number");
 
   element.invalid = invalid;
+  element.style.width = "276px";
+  element.style.setProperty("--ds-field-group-direction", "row");
+  element.style.setProperty("--ds-field-group-align-items", "flex-start");
   select.name = "currency";
   select.value = "eur";
+  select.style.width = "96px";
+  select.style.flex = "0 0 96px";
   select.setAttribute("aria-label", "Currency");
   ["eur", "usd", "gbp"].forEach((value) => {
     const option = document.createElement("option");
@@ -87,6 +99,8 @@ const group = ({ invalid = false } = {}) => {
   amount.value = "1250";
   amount.min = "0";
   amount.step = "0.01";
+  amount.style.flex = "1 1 auto";
+  amount.style.width = "auto";
   amount.setAttribute("aria-label", "Amount");
   amount.setAttribute("controls", "none");
 
@@ -103,9 +117,19 @@ const group = ({ invalid = false } = {}) => {
 
 const groupSource = ({ invalid = false } = {}) => `<ds-field-group${sourceAttributes({
   invalid,
+  style: sourceStyle({
+    width: "276px",
+    "--ds-field-group-direction": "row",
+    "--ds-field-group-align-items": "flex-start",
+  }),
 })}>
   <span slot="label">Amount</span>
-  <ds-input-select name="currency" value="eur" aria-label="Currency">
+  <ds-input-select
+    name="currency"
+    value="eur"
+    aria-label="Currency"
+    style="width: 96px; flex: 0 0 96px;"
+  >
 ${indent(sourceOptions, 4)}
   </ds-input-select>
   <ds-input-number
@@ -115,6 +139,7 @@ ${indent(sourceOptions, 4)}
     step="0.01"
     controls="none"
     aria-label="Amount"
+    style="width: auto; flex: 1 1 auto;"
   ></ds-input-number>
   <span slot="description">Enter the amount before tax.</span>
   <span slot="error">Enter a valid amount.</span>

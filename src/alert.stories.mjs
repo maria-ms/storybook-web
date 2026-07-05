@@ -20,8 +20,11 @@ const alertAttributes = (state) => ({
   size: state.size,
 });
 
+const alertWidth = (size) =>
+  `min(100%, ${size === "small" ? "343px" : size === "medium" ? "560px" : "976px"})`;
+
 const alertStyles = (state) => ({
-  ...(state.width ? { width: state.width } : {}),
+  width: alertWidth(state.size),
 });
 
 const renderAction = (state) => {
@@ -141,7 +144,6 @@ const meta = {
     actionLabel: { control: false, table: { disable: true } },
     description: { control: false, table: { disable: true } },
     title: { control: false, table: { disable: true } },
-    width: { control: false, table: { disable: true } },
   },
   parameters: alertParameters(states.default, "40012630:1307"),
 };

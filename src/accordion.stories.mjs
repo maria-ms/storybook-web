@@ -17,11 +17,11 @@ const accordionAttributes = (state) => ({
 });
 
 const accordionStyles = (state) => ({
-  ...(state.width ? { "--ds-accordion-width": state.width } : {}),
+  ...(state.width ? { width: state.width } : {}),
 });
 
 const accordionCardStyles = (state) => ({
-  ...(state.width ? { "--ds-accordion-width": state.width } : {}),
+  ...(state.width ? { width: state.width } : {}),
 });
 
 const renderAccordion = (state) => {
@@ -90,16 +90,19 @@ const states = {
   default: {
     title: "Accordion item",
     content: bodyText,
+    width: "353px",
   },
   disabled: {
     title: "Accordion item",
     content: bodyText,
     disabled: true,
+    width: "353px",
   },
   expanded: {
     title: "Accordion item",
     content: bodyText,
     expanded: true,
+    width: "353px",
   },
   customContent: {
     title: "Billing and invoice settings",
@@ -109,6 +112,7 @@ const states = {
   },
   card: {
     ariaLabel: "Frequently asked questions",
+    width: "440px",
     items: [
       {
         title: "Is it accessible?",
@@ -138,11 +142,7 @@ const meta = {
     ariaLabel: { control: "text", name: "aria-label" },
     disabled: { control: "boolean" },
     expanded: { control: "boolean" },
-    width: {
-      control: "text",
-      name: "--ds-accordion-width",
-      table: { category: "CSS custom properties" },
-    },
+    width: { control: false, table: { disable: true } },
     content: { control: false, table: { disable: true } },
     items: { control: false, table: { disable: true } },
     multiple: { control: false, table: { disable: true } },

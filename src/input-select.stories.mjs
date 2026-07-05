@@ -117,6 +117,7 @@ const fieldOptions = (state) => ({
   error: state.error,
   invalid: state.ariaInvalid,
   label: state.label,
+  width: state.fieldWidth ?? "276px",
 });
 
 const renderFieldInput = (state) =>
@@ -221,6 +222,7 @@ const meta = {
     required: { control: "boolean" },
     size: { control: "select", options: ["", "small"] },
     ...valueArgType(optionValues(options)),
+    fieldWidth: { control: false, table: { disable: true } },
     groups: { control: false, table: { disable: true } },
     options: { control: false, table: { disable: true } },
     prefixIcon: { control: false, table: { disable: true } },

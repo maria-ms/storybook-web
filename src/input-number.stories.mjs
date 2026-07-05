@@ -14,6 +14,7 @@ import {
   sourceField,
   sourceStoryGroup,
   sourceSubmitForm,
+  sourceStyle,
   staticStoryParametersFor,
   storyParameters,
   textSlot,
@@ -63,6 +64,7 @@ const fieldOptions = (state) => ({
   error: state.error,
   invalid: state.ariaInvalid,
   label: state.label,
+  width: state.fieldWidth ?? "276px",
 });
 
 const renderFieldInput = (state) =>
@@ -113,6 +115,13 @@ const renderCurrencyInput = (state) => {
   const select = document.createElement("ds-input-select");
   const number = document.createElement("ds-input-number");
 
+  group.style.width = "276px";
+  group.style.setProperty("--ds-field-group-direction", "row");
+  group.style.setProperty("--ds-field-group-align-items", "flex-start");
+  select.style.width = "96px";
+  select.style.flex = "0 0 96px";
+  number.style.width = "auto";
+  number.style.flex = "1 1 auto";
   group.append(
     textSlot("label", state.label),
     select,
@@ -138,11 +147,18 @@ const renderCurrencyInput = (state) => {
 };
 
 const sourceCurrencyInput = (state) => `
-<ds-field-group>
+<ds-field-group style="${sourceStyle({
+  width: "276px",
+  "--ds-field-group-direction": "row",
+  "--ds-field-group-align-items": "flex-start",
+})}">
   <span slot="label">${escapeHtml(state.label)}</span>
-  <ds-input-select name="${escapeHtml(state.currencyName)}" value="${escapeHtml(
-    state.currency,
-  )}" aria-label="Currency">
+  <ds-input-select
+    name="${escapeHtml(state.currencyName)}"
+    value="${escapeHtml(state.currency)}"
+    aria-label="Currency"
+    style="width: 96px; flex: 0 0 96px;"
+  >
 ${indent(
   currencyOptions
     .map(
@@ -159,6 +175,7 @@ ${indent(
     step="0.01"
     controls="none"
     aria-label="Amount"
+    style="width: auto; flex: 1 1 auto;"
   ></ds-input-number>
   <span slot="description">${escapeHtml(state.description)}</span>
 </ds-field-group>
@@ -223,6 +240,7 @@ const meta = {
     size: { control: "select", options: ["", "small"] },
     step: { control: "text" },
     value: { control: "text" },
+    fieldWidth: { control: false, table: { disable: true } },
     description: { control: false, table: { disable: true } },
     label: { control: false, table: { disable: true } },
     suffixIcon: { control: false, table: { disable: true } },

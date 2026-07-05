@@ -141,8 +141,9 @@ export const renderField = (
 
 export const sourceField = (
   control,
-  { description, error, invalid, label, style } = {},
+  { description, error, invalid, label, style, width } = {},
 ) => {
+  const fieldStyle = style || sourceStyle({ width });
   const children = [
     label && `<span slot="label">${escapeHtml(label)}</span>`,
     control,
@@ -150,7 +151,7 @@ export const sourceField = (
     error && `<span slot="error">${escapeHtml(error)}</span>`,
   ].filter(Boolean);
 
-  return `<ds-field${sourceAttributes({ invalid, style })}>\n${indent(
+  return `<ds-field${sourceAttributes({ invalid, style: fieldStyle })}>\n${indent(
     children.join("\n"),
   )}\n</ds-field>`;
 };

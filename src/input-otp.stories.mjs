@@ -43,6 +43,7 @@ const fieldOptions = (state) => ({
   error: state.error,
   invalid: state.ariaInvalid,
   label: state.label,
+  width: state.fieldWidth ?? "max-content",
 });
 
 const renderFieldInput = (state) =>
@@ -98,6 +99,7 @@ const meta = {
     readonly: { control: "boolean" },
     required: { control: "boolean" },
     value: { control: "text" },
+    fieldWidth: { control: false, table: { disable: true } },
   },
   parameters: inputParameters(baseInput, "40002108:11535"),
 };
