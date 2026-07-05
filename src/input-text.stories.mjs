@@ -1,25 +1,25 @@
 import "@maria-ms/components-web/button";
+import "@maria-ms/components-web/field";
 import "@maria-ms/components-web/input-text";
 import { icon } from "./icons.mjs";
 import {
-  escapeHtml,
   indent,
+  renderField,
   renderStoryGroup,
   renderSubmitForm,
   setAttributes,
   sourceAttributes,
+  sourceField,
   sourceStoryGroup,
   sourceSubmitForm,
   staticStoryParametersFor,
   storyParameters,
-  textSlot,
 } from "./story-helpers.mjs";
 
 const inputAttributes = (state) => ({
   autocomplete: state.autocomplete,
   disabled: state.disabled,
   inputmode: state.inputmode,
-  "label-position": state.labelPosition,
   maxlength: state.maxlength,
   minlength: state.minlength,
   name: state.name,
@@ -38,8 +38,6 @@ const renderInput = (state) => {
   const element = document.createElement("ds-input-text");
 
   setAttributes(element, inputAttributes(state));
-  if (state.label) element.append(textSlot("label", state.label));
-  if (state.description) element.append(textSlot("description", state.description));
   if (state.prefixIcon) element.append(icon("prefix", state.prefixIcon));
   if (state.suffixIcon) element.append(icon("suffix", state.suffixIcon));
 
@@ -48,9 +46,6 @@ const renderInput = (state) => {
 
 const sourceInput = (state) => {
   const children = [
-    state.label && `<span slot="label">${escapeHtml(state.label)}</span>`,
-    state.description &&
-      `<span slot="description">${escapeHtml(state.description)}</span>`,
     state.prefixIcon &&
       `<svg slot="prefix" aria-hidden="true"><!-- ${state.prefixIcon} icon --></svg>`,
     state.suffixIcon &&
@@ -64,19 +59,32 @@ const sourceInput = (state) => {
     : `<ds-input-text${sourceAttributes(inputAttributes(state))}></ds-input-text>`;
 };
 
-const inputParameters = (args, design) => ({
-  ...storyParameters(sourceInput(args), design),
+const fieldOptions = (state) => ({
+  description: state.description,
+  error: state.error,
+  invalid: state.ariaInvalid,
+  label: state.label,
 });
 
-const renderGroup = ({ items }) => renderStoryGroup(items, renderInput);
+const renderFieldInput = (state) =>
+  renderField(renderInput(state), fieldOptions(state));
+
+const sourceFieldInput = (state) =>
+  sourceField(sourceInput(state), fieldOptions(state));
+
+const inputParameters = (args, design) => ({
+  ...storyParameters(sourceFieldInput(args), design),
+});
+
+const renderGroup = ({ items }) => renderStoryGroup(items, renderFieldInput);
 
 const groupParameters = (items, design) => ({
-  ...staticStoryParametersFor(sourceStoryGroup(items, sourceInput), design),
+  ...staticStoryParametersFor(sourceStoryGroup(items, sourceFieldInput), design),
 });
 
-const renderForm = (state) => renderSubmitForm(renderInput(state));
+const renderForm = (state) => renderSubmitForm(renderFieldInput(state));
 
-const sourceForm = (state) => sourceSubmitForm(sourceInput(state));
+const sourceForm = (state) => sourceSubmitForm(sourceFieldInput(state));
 
 const baseInput = {
   label: "Label",
@@ -95,21 +103,16 @@ const meta = {
   title: "Input Text",
   component: "ds-input-text",
   tags: ["autodocs"],
-  render: renderInput,
+  render: renderFieldInput,
   args: baseInput,
   argTypes: {
     ariaInvalid: { control: "boolean", name: "aria-invalid" },
     ariaLabel: { control: "text", name: "aria-label" },
     autocomplete: { control: "text" },
-    description: { control: "text" },
+    description: { control: false, table: { disable: true } },
     disabled: { control: "boolean" },
     inputmode: { control: "text" },
-    label: { control: "text" },
-    labelPosition: {
-      control: "select",
-      name: "label-position",
-      options: ["", "start"],
-    },
+    label: { control: false, table: { disable: true } },
     maxlength: { control: "text" },
     minlength: { control: "text" },
     name: { control: "text" },

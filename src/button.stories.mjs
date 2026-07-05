@@ -1,4 +1,5 @@
 import "@maria-ms/components-web/button";
+import "@maria-ms/components-web/field";
 import "@maria-ms/components-web/input-text";
 import {
   escapeHtml,
@@ -106,9 +107,10 @@ const buttonParameters = (args, design) => ({
 
 const sourceForm = (state) => `
 <form>
-  <ds-input-text type="email" name="email" value="isabel@example.com" required>
+  <ds-field>
     <span slot="label">Email</span>
-  </ds-input-text>
+    <ds-input-text type="email" name="email" value="isabel@example.com" required></ds-input-text>
+  </ds-field>
 ${indent(sourceButton(state))}
 </form>
 `;
@@ -134,6 +136,7 @@ const formParameters = (args) => ({
 
 const renderForm = (state) => {
   const form = document.createElement("form");
+  const field = document.createElement("ds-field");
   const input = document.createElement("ds-input-text");
   const output = document.createElement("output");
 
@@ -146,9 +149,9 @@ const renderForm = (state) => {
     type: "email",
     value: "isabel@example.com",
   });
-  input.append(textSlot("label", "Email"));
+  field.append(textSlot("label", "Email"), input);
   output.setAttribute("aria-live", "polite");
-  form.append(input, renderButton(state), output);
+  form.append(field, renderButton(state), output);
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const data = new FormData(form, event.submitter);

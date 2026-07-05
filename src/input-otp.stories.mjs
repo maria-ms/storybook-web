@@ -1,24 +1,23 @@
 import "@maria-ms/components-web/button";
+import "@maria-ms/components-web/field";
 import "@maria-ms/components-web/input-otp";
 import {
-  escapeHtml,
-  indent,
+  renderField,
   renderStoryGroup,
   renderSubmitForm,
   setAttributes,
   sourceAttributes,
+  sourceField,
   sourceStoryGroup,
   sourceSubmitForm,
   staticStoryParametersFor,
   storyParameters,
-  textSlot,
 } from "./story-helpers.mjs";
 
 const inputAttributes = (state) => ({
   autocomplete: state.autocomplete,
   disabled: state.disabled,
   inputmode: state.inputmode,
-  "label-position": state.labelPosition,
   length: state.length,
   name: state.name,
   readonly: state.readonly,
@@ -32,40 +31,40 @@ const renderInput = (state) => {
   const element = document.createElement("ds-input-otp");
 
   setAttributes(element, inputAttributes(state));
-  if (state.label) element.append(textSlot("label", state.label));
-  if (state.description) element.append(textSlot("description", state.description));
 
   return element;
 };
 
-const sourceInput = (state) => {
-  const children = [
-    state.label && `<span slot="label">${escapeHtml(state.label)}</span>`,
-    state.description &&
-      `<span slot="description">${escapeHtml(state.description)}</span>`,
-  ].filter(Boolean);
+const sourceInput = (state) =>
+  `<ds-input-otp${sourceAttributes(inputAttributes(state))}></ds-input-otp>`;
 
-  return children.length
-    ? `<ds-input-otp${sourceAttributes(inputAttributes(state))}>\n${indent(
-        children.join("\n"),
-      )}\n</ds-input-otp>`
-    : `<ds-input-otp${sourceAttributes(inputAttributes(state))}></ds-input-otp>`;
-};
+const fieldOptions = (state) => ({
+  description: state.description,
+  error: state.error,
+  invalid: state.ariaInvalid,
+  label: state.label,
+});
+
+const renderFieldInput = (state) =>
+  renderField(renderInput(state), fieldOptions(state));
+
+const sourceFieldInput = (state) =>
+  sourceField(sourceInput(state), fieldOptions(state));
 
 const inputParameters = (args, design) => ({
-  ...storyParameters(sourceInput(args), design),
+  ...storyParameters(sourceFieldInput(args), design),
 });
 
 const renderGroup = ({ items }) =>
-  renderStoryGroup(items, renderInput, { direction: "column", wrap: false });
+  renderStoryGroup(items, renderFieldInput, { direction: "column", wrap: false });
 
 const groupParameters = (items, design) => ({
-  ...staticStoryParametersFor(sourceStoryGroup(items, sourceInput), design),
+  ...staticStoryParametersFor(sourceStoryGroup(items, sourceFieldInput), design),
 });
 
-const renderForm = (state) => renderSubmitForm(renderInput(state));
+const renderForm = (state) => renderSubmitForm(renderFieldInput(state));
 
-const sourceForm = (state) => sourceSubmitForm(sourceInput(state));
+const sourceForm = (state) => sourceSubmitForm(sourceFieldInput(state));
 
 const baseInput = {
   label: "Code",
@@ -84,21 +83,16 @@ const meta = {
   title: "Input OTP",
   component: "ds-input-otp",
   tags: ["autodocs"],
-  render: renderInput,
+  render: renderFieldInput,
   args: baseInput,
   argTypes: {
     ariaInvalid: { control: "boolean", name: "aria-invalid" },
     ariaLabel: { control: "text", name: "aria-label" },
     autocomplete: { control: "text" },
-    description: { control: "text" },
+    description: { control: false, table: { disable: true } },
     disabled: { control: "boolean" },
     inputmode: { control: "text" },
-    label: { control: "text" },
-    labelPosition: {
-      control: "select",
-      name: "label-position",
-      options: ["", "start"],
-    },
+    label: { control: false, table: { disable: true } },
     length: { control: "number" },
     name: { control: "text" },
     readonly: { control: "boolean" },

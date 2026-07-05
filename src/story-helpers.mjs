@@ -122,3 +122,35 @@ export const textSlot = (slot, text) => {
   element.textContent = text;
   return element;
 };
+
+export const renderField = (
+  control,
+  { description, error, invalid, label, width } = {},
+) => {
+  const field = document.createElement("ds-field");
+
+  if (width) field.style.width = width;
+  field.invalid = Boolean(invalid);
+  if (label) field.append(textSlot("label", label));
+  field.append(control);
+  if (description) field.append(textSlot("description", description));
+  if (error) field.append(textSlot("error", error));
+
+  return field;
+};
+
+export const sourceField = (
+  control,
+  { description, error, invalid, label, style } = {},
+) => {
+  const children = [
+    label && `<span slot="label">${escapeHtml(label)}</span>`,
+    control,
+    description && `<span slot="description">${escapeHtml(description)}</span>`,
+    error && `<span slot="error">${escapeHtml(error)}</span>`,
+  ].filter(Boolean);
+
+  return `<ds-field${sourceAttributes({ invalid, style })}>\n${indent(
+    children.join("\n"),
+  )}\n</ds-field>`;
+};
