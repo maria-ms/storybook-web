@@ -1,6 +1,6 @@
 import "@maria-ms/components-web/button";
 import "@maria-ms/components-web/field";
-import "@maria-ms/components-web/input-text";
+import "@maria-ms/components-web/input-number";
 import {
   escapeHtml,
   indent,
@@ -108,8 +108,8 @@ const buttonParameters = (args, design) => ({
 const sourceForm = (state) => `
 <form>
   <ds-field>
-    <span slot="label">Email</span>
-    <ds-input-text type="email" name="email" value="isabel@example.com" required></ds-input-text>
+    <span slot="label">Quantity</span>
+    <ds-input-number name="quantity" value="1" min="1" step="1" required></ds-input-number>
   </ds-field>
 ${indent(sourceButton(state))}
 </form>
@@ -137,25 +137,26 @@ const formParameters = (args) => ({
 const renderForm = (state) => {
   const form = document.createElement("form");
   const field = document.createElement("ds-field");
-  const input = document.createElement("ds-input-text");
+  const input = document.createElement("ds-input-number");
   const output = document.createElement("output");
 
   form.style.display = "grid";
   form.style.width = "min(100%, 360px)";
   form.style.gap = "var(--ds-primitive-space-04)";
   setAttributes(input, {
-    name: "email",
+    min: "1",
+    name: "quantity",
     required: true,
-    type: "email",
-    value: "isabel@example.com",
+    step: "1",
+    value: "1",
   });
-  field.append(textSlot("label", "Email"), input);
+  field.append(textSlot("label", "Quantity"), input);
   output.setAttribute("aria-live", "polite");
   form.append(field, renderButton(state), output);
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const data = new FormData(form, event.submitter);
-    output.value = `Submitted ${data.get("email")} with ${data.get(state.name)}`;
+    output.value = `Submitted ${data.get("quantity")} with ${data.get(state.name)}`;
   });
 
   return form;
