@@ -7,17 +7,8 @@ import "../src/preview.css";
 /** @type {import("@storybook/web-components-vite").Preview} */
 export default {
   parameters: {
-    controls: { expanded: true },
+    docs: { disable: true },
     layout: "centered",
-    backgrounds: {
-      options: {
-        light: { name: "Light", value: "#fafafa" },
-        dark: { name: "Dark", value: "#0a0a0a" },
-      },
-    },
-  },
-  initialGlobals: {
-    backgrounds: { value: "light", grid: false },
   },
   decorators: [
     withThemeByDataAttribute({

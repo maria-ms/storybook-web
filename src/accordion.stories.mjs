@@ -1,4 +1,5 @@
 import "@maria-ms/components-web/accordion";
+import { fn } from "storybook/test";
 import {
   escapeHtml,
   indent,
@@ -31,6 +32,10 @@ const renderAccordion = (state) => {
 
   setAttributes(element, accordionAttributes(state));
   setStyles(element, accordionStyles(state));
+  if (state.onBeforeToggle) {
+    element.addEventListener("beforetoggle", state.onBeforeToggle);
+  }
+  if (state.onToggle) element.addEventListener("toggle", state.onToggle);
   header.textContent = state.title || "Accordion item";
   content.textContent = state.content || "";
   element.append(header, content);
@@ -104,12 +109,6 @@ const states = {
     expanded: true,
     width: "353px",
   },
-  customContent: {
-    title: "Billing and invoice settings",
-    content: bodyText,
-    expanded: true,
-    width: "420px",
-  },
   card: {
     ariaLabel: "Frequently asked questions",
     width: "440px",
@@ -133,20 +132,29 @@ const states = {
 };
 
 const meta = {
-  title: "Accordion",
+  title: "Components/Accordion",
   component: "ds-accordion-item",
-  tags: ["autodocs"],
   render: renderAccordion,
-  args: states.default,
+  args: {
+    ...states.default,
+    onBeforeToggle: fn(),
+    onToggle: fn(),
+  },
   argTypes: {
-    ariaLabel: { control: "text", name: "aria-label" },
-    disabled: { control: "boolean" },
-    expanded: { control: "boolean" },
+    title: { control: "text", table: { category: "Content" } },
+    content: { control: "text", table: { category: "Content" } },
+    expanded: { control: "boolean", table: { category: "State" } },
+    disabled: { control: "boolean", table: { category: "State" } },
+    ariaLabel: {
+      control: "text",
+      name: "aria-label",
+      table: { category: "Accessibility" },
+    },
     width: { control: false, table: { disable: true } },
-    content: { control: false, table: { disable: true } },
     items: { control: false, table: { disable: true } },
     multiple: { control: false, table: { disable: true } },
-    title: { control: false, table: { disable: true } },
+    onBeforeToggle: { control: false, table: { category: "Events" } },
+    onToggle: { control: false, table: { category: "Events" } },
   },
   parameters: accordionParameters(states.default, "40002151:4271"),
 };
@@ -166,11 +174,6 @@ export const Expanded = {
 export const Disabled = {
   args: states.disabled,
   parameters: accordionParameters(states.disabled, "40002151:4271"),
-};
-
-export const CustomContent = {
-  args: states.customContent,
-  parameters: accordionParameters(states.customContent),
 };
 
 export const Card = {

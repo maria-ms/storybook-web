@@ -38,25 +38,12 @@ const image = ({ alt, slot }) => {
   return element;
 };
 
-const picture = ({ alt }) => {
-  const element = document.createElement("picture");
-  const source = document.createElement("source");
-
-  source.srcset = previewImage;
-  source.type = "image/svg+xml";
-  element.append(source, image({ alt }));
-
-  return element;
-};
-
 const media = {
   badge: ({ alt }) => image({ alt, slot: "badge" }),
   image,
-  picture,
 };
 
-const mediaKind = (state) =>
-  state.media === "image" || state.media === "picture" ? state.media : "";
+const mediaKind = (state) => (state.media === "image" ? state.media : "");
 
 const imageAlt = (state) => state.imageAlt || state.ariaLabel || "Isabel Navarro";
 
@@ -77,16 +64,7 @@ const renderAvatar = (state) => {
   return element;
 };
 
-const sourceMedia = (kind, alt) =>
-  kind === "picture"
-    ? `
-  <picture>
-    <source srcset="/avatar.avif" type="image/avif" />
-    <source srcset="/avatar.webp" type="image/webp" />
-    <img src="/avatar.jpg" alt="${escapeHtml(alt)}" />
-  </picture>
-`
-    : `
+const sourceMedia = (alt) => `
   <img src="/avatar.jpg" alt="${escapeHtml(alt)}" />
 `;
 
@@ -102,7 +80,7 @@ const sourceAvatar = (state) => {
     "aria-label": state.ariaLabel,
   });
   const children = [
-    mediaKind(state) && sourceMedia(mediaKind(state), imageAlt(state)),
+    mediaKind(state) && sourceMedia(imageAlt(state)),
     state.badge && sourceBadge(state.badgeAlt || "Acme"),
   ].filter(Boolean);
 
@@ -135,11 +113,6 @@ const states = {
     media: "image",
     imageAlt: "Isabel Navarro",
   },
-  picture: {
-    size: "md",
-    media: "picture",
-    imageAlt: "Isabel Navarro",
-  },
   placeholder: {
     size: "md",
   },
@@ -163,23 +136,36 @@ const sizeItems = ["xs", "sm", "md", "lg", "xl", "2xl"].map((size) => ({
 }));
 
 const meta = {
-  title: "Avatar",
+  title: "Components/Avatar",
   component: "ds-avatar",
-  tags: ["autodocs"],
   render: renderAvatar,
   args: states.default,
   argTypes: {
-    ariaLabel: { control: "text", name: "aria-label" },
-    initials: { control: "text" },
+    initials: { control: "text", table: { category: "Content" } },
+    media: {
+      control: "select",
+      options: ["", "image"],
+      table: { category: "Content" },
+    },
+    badge: { control: "boolean", table: { category: "Content" } },
     size: {
       control: "select",
       options: ["xs", "sm", "md", "lg", "xl", "2xl"],
+      table: { category: "Appearance" },
     },
-    status: { control: "select", options: ["", "online", "offline"] },
-    badge: { control: false, table: { disable: true } },
-    badgeAlt: { control: false, table: { disable: true } },
-    imageAlt: { control: false, table: { disable: true } },
-    media: { control: false, table: { disable: true } },
+    status: {
+      control: "select",
+      options: ["", "online", "offline"],
+      table: { category: "State" },
+    },
+    ariaLabel: {
+      control: "text",
+      name: "aria-label",
+      table: { category: "Accessibility" },
+    },
+    imageAlt: { control: "text", table: { category: "Accessibility" } },
+    badgeAlt: { control: "text", table: { category: "Accessibility" } },
+    items: { control: false, table: { disable: true } },
   },
   parameters: avatarParameters(states.default),
 };
@@ -196,18 +182,10 @@ export const Image = {
   parameters: avatarParameters(states.image),
 };
 
-export const Picture = {
-  args: states.picture,
-  parameters: avatarParameters(states.picture),
-};
-
 export const Status = {
   args: { items: statusItems },
   render: ({ items }) => renderGroup(items),
   parameters: groupParameters(statusItems),
-  argTypes: {
-    items: { control: false, table: { disable: true } },
-  },
 };
 
 export const CustomBadge = {
@@ -219,9 +197,6 @@ export const Sizes = {
   args: { items: sizeItems },
   render: ({ items }) => renderGroup(items),
   parameters: groupParameters(sizeItems),
-  argTypes: {
-    items: { control: false, table: { disable: true } },
-  },
 };
 
 export const Placeholder = {

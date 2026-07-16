@@ -88,70 +88,9 @@ export const renderStoryGroup = (
 export const sourceStoryGroup = (items, sourceItem) =>
   `<div>\n${indent(items.map(sourceItem).join("\n"))}\n</div>`;
 
-export const renderSubmitForm = (control, { width } = {}) => {
-  const form = document.createElement("form");
-  const button = document.createElement("ds-button");
-  const output = document.createElement("output");
-
-  button.type = "submit";
-  button.textContent = "Submit";
-  output.setAttribute("aria-live", "polite");
-  form.style.display = "grid";
-  form.style.gap = "var(--ds-primitive-space-04)";
-  if (width) form.style.width = width;
-  form.append(control, button, output);
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    output.value = new URLSearchParams(new FormData(form)).toString();
-  });
-
-  return form;
-};
-
-export const sourceSubmitForm = (control, { style } = {}) => `
-<form${sourceAttributes({ style })}>
-${indent(control)}
-  <ds-button type="submit">Submit</ds-button>
-  <output></output>
-</form>
-`;
-
 export const textSlot = (slot, text) => {
   const element = document.createElement("span");
   element.slot = slot;
   element.textContent = text;
   return element;
-};
-
-export const renderField = (
-  control,
-  { description, error, invalid, label, width } = {},
-) => {
-  const field = document.createElement("ds-field");
-
-  if (width) field.style.width = width;
-  field.invalid = Boolean(invalid);
-  if (label) field.append(textSlot("label", label));
-  field.append(control);
-  if (description) field.append(textSlot("description", description));
-  if (error) field.append(textSlot("error", error));
-
-  return field;
-};
-
-export const sourceField = (
-  control,
-  { description, error, invalid, label, style, width } = {},
-) => {
-  const fieldStyle = style || sourceStyle({ width });
-  const children = [
-    label && `<span slot="label">${escapeHtml(label)}</span>`,
-    control,
-    description && `<span slot="description">${escapeHtml(description)}</span>`,
-    error && `<span slot="error">${escapeHtml(error)}</span>`,
-  ].filter(Boolean);
-
-  return `<ds-field${sourceAttributes({ invalid, style: fieldStyle })}>\n${indent(
-    children.join("\n"),
-  )}\n</ds-field>`;
 };

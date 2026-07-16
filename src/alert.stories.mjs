@@ -1,5 +1,5 @@
 import "@maria-ms/components-web/alert";
-import "@maria-ms/components-web/button";
+import { fn } from "storybook/test";
 import {
   escapeHtml,
   indent,
@@ -30,10 +30,11 @@ const alertStyles = (state) => ({
 const renderAction = (state) => {
   if (!state.actionLabel) return null;
 
-  const button = document.createElement("ds-button");
+  const button = document.createElement("button");
 
   button.slot = "action";
-  button.setAttribute("variant", "secondary");
+  button.type = "button";
+  if (state.onActionClick) button.addEventListener("click", state.onActionClick);
   button.append(state.actionLabel);
 
   return button;
@@ -56,7 +57,7 @@ const renderAlert = (state) => {
 
 const sourceAction = (state) =>
   state.actionLabel
-    ? `<ds-button slot="action" variant="secondary">${escapeHtml(state.actionLabel)}</ds-button>`
+    ? `<button slot="action" type="button">${escapeHtml(state.actionLabel)}</button>`
     : "";
 
 const sourceAlert = (state) => {
@@ -100,12 +101,6 @@ const groupParameters = (items, design) => ({
 
 const states = {
   default: alert(),
-  urgent: alert({
-    live: "assertive",
-    tone: "error",
-    title: "Session expired",
-    description: "Sign in again to continue.",
-  }),
   withAction: alert({ actionLabel: "Button" }),
 };
 
@@ -123,27 +118,33 @@ const sizeItems = [
 ];
 
 const meta = {
-  title: "Alert",
+  title: "Components/Alert",
   component: "ds-alert",
-  tags: ["autodocs"],
   render: renderAlert,
-  args: states.default,
+  args: {
+    ...states.default,
+    onActionClick: fn(),
+  },
   argTypes: {
-    live: {
+    title: { control: "text", table: { category: "Content" } },
+    description: { control: "text", table: { category: "Content" } },
+    actionLabel: { control: "text", table: { category: "Content" } },
+    tone: {
       control: "select",
-      options: ["", "polite", "assertive"],
+      options: ["success", "info", "warning", "error"],
+      table: { category: "Appearance" },
     },
     size: {
       control: "select",
-      options: ["", "large", "medium", "small"],
+      options: ["large", "medium", "small"],
+      table: { category: "Appearance" },
     },
-    tone: {
+    live: {
       control: "select",
-      options: ["", "success", "info", "warning", "error"],
+      options: ["", "polite", "assertive"],
+      table: { category: "Accessibility" },
     },
-    actionLabel: { control: false, table: { disable: true } },
-    description: { control: false, table: { disable: true } },
-    title: { control: false, table: { disable: true } },
+    onActionClick: { control: false, table: { category: "Events" } },
   },
   parameters: alertParameters(states.default, "40012630:1307"),
 };
@@ -159,26 +160,15 @@ export const Tones = {
   args: { items: toneItems },
   render: ({ items }) => renderGroup(items),
   parameters: groupParameters(toneItems, "40012630:1306"),
-  argTypes: {
-    items: { control: false, table: { disable: true } },
-  },
 };
 
 export const Sizes = {
   args: { items: sizeItems },
   render: ({ items }) => renderGroup(items),
   parameters: groupParameters(sizeItems, "40012630:1306"),
-  argTypes: {
-    items: { control: false, table: { disable: true } },
-  },
 };
 
 export const WithAction = {
   args: states.withAction,
   parameters: alertParameters(states.withAction, "40012630:1307"),
-};
-
-export const UrgentLiveRegion = {
-  args: states.urgent,
-  parameters: alertParameters(states.urgent, "40012630:1307"),
 };

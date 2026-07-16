@@ -1,5 +1,6 @@
 import "@maria-ms/components-web/avatar";
 import "@maria-ms/components-web/dropdown";
+import { fn } from "storybook/test";
 import { icon } from "./icons.mjs";
 import {
   escapeHtml,
@@ -9,6 +10,7 @@ import {
   sourceAttributes,
   sourceStoryGroup,
   sourceStyle,
+  staticStoryParametersFor,
   setStyles,
   storyParameters,
   textSlot,
@@ -233,6 +235,10 @@ const renderDropdown = (state) => {
     open: state.open,
   });
   setStyles(element, actionMenuStyles(state));
+  if (state.onBeforeSelect) {
+    element.addEventListener("beforeselect", state.onBeforeSelect);
+  }
+  if (state.onSelect) element.addEventListener("select", state.onSelect);
 
   element.append(
     renderTrigger(state.trigger, state.open),
@@ -344,7 +350,7 @@ const renderDropdownSet = (items) =>
   renderStoryGroup(items, renderDropdown, { gap: "var(--ds-primitive-space-08)" });
 
 const dropdownSetParameters = (items, design) => ({
-  ...storyParameters(sourceStoryGroup(items, sourceDropdown), design),
+  ...staticStoryParametersFor(sourceStoryGroup(items, sourceDropdown), design),
 });
 
 const account = {
@@ -471,36 +477,6 @@ const states = {
     ariaLabel: "Settings menu",
     trigger: { kind: "icon", name: "settings" },
   }),
-  rich: dropdown({
-    open: true,
-    width: "280px",
-    content: [
-      {
-        kind: "group",
-        items: [
-          {
-            description: "12 members",
-            end: "Owner",
-            icon: "building",
-            label: "Acme Workspace",
-            value: "acme-workspace",
-          },
-          {
-            description: "Connected",
-            end: "Active",
-            icon: "slack",
-            label: "Slack",
-            value: "slack-connected",
-          },
-          {
-            description: "Long labels truncate when space is constrained.",
-            label: "A longer menu item label",
-            value: "long-row",
-          },
-        ],
-      },
-    ],
-  }),
   withoutHeader: dropdown({ open: true, content: accountGroups }),
 };
 
@@ -515,19 +491,33 @@ const choiceItems = [
 ];
 
 const meta = {
-  title: "Action Menu",
+  title: "Components/Action Menu",
   component: "ds-dropdown",
-  tags: ["autodocs"],
   render: renderDropdown,
-  args: states.button,
+  args: {
+    ...states.button,
+    onBeforeSelect: fn(),
+    onSelect: fn(),
+  },
   argTypes: {
-    align: { control: "select", options: ["start", "end"] },
-    ariaLabel: { control: "text", name: "aria-label" },
-    disabled: { control: "boolean" },
-    open: { control: "boolean" },
-    width: { control: false, table: { disable: true } },
-    content: { control: false, table: { disable: true } },
+    align: {
+      control: "select",
+      options: ["start", "end"],
+      table: { category: "Appearance" },
+    },
+    open: { control: "boolean", table: { category: "State" } },
+    disabled: { control: "boolean", table: { category: "State" } },
+    ariaLabel: {
+      control: "text",
+      name: "aria-label",
+      table: { category: "Accessibility" },
+    },
+    width: { control: "text", table: { category: "Appearance" } },
     trigger: { control: false, table: { disable: true } },
+    content: { control: false, table: { disable: true } },
+    items: { control: false, table: { disable: true } },
+    onBeforeSelect: { control: false, table: { category: "Events" } },
+    onSelect: { control: false, table: { category: "Events" } },
   },
   parameters: dropdownParameters(states.button, "40020967:38534"),
 };
@@ -548,9 +538,6 @@ export const CustomTriggers = {
   args: { items: triggerItems },
   render: ({ items }) => renderDropdownSet(items),
   parameters: dropdownSetParameters(triggerItems, "40020967:33715"),
-  argTypes: {
-    items: { control: false, table: { disable: true } },
-  },
 };
 
 export const GroupedItems = {
@@ -558,16 +545,8 @@ export const GroupedItems = {
   parameters: dropdownParameters(states.withoutHeader, "40020967:22605"),
 };
 
-export const RichItems = {
-  args: states.rich,
-  parameters: dropdownParameters(states.rich),
-};
-
 export const CheckableMenuItems = {
   args: { items: choiceItems },
   render: ({ items }) => renderDropdownSet(items),
   parameters: dropdownSetParameters(choiceItems, "40020967:17520"),
-  argTypes: {
-    items: { control: false, table: { disable: true } },
-  },
 };

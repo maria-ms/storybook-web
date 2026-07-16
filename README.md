@@ -1,5 +1,9 @@
 # Maria's web Storybook
 
+This Storybook is a focused visual catalogue of implemented components and
+their Figma artboard examples. It intentionally omits generated Docs pages,
+controls, and engineering-only demo stories.
+
 ## Install
 
 ```sh
@@ -43,4 +47,6 @@ npm run dev
 npm run build
 ```
 
-The app imports `@maria-ms/components-web/input-number` and the light/dark CSS token entry points from `@maria-ms/tokens`.
+The app imports individual component entry points from
+`@maria-ms/components-web` and the light/dark CSS token entry points from
+`@maria-ms/tokens`.
