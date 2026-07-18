@@ -4,7 +4,7 @@ import { fn } from "storybook/test";
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022001-53&m=dev";
 
-const icon = (path) => {
+const icon = (path, strokeWidth = "2") => {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
   svg.setAttribute("aria-hidden", "true");
@@ -13,7 +13,7 @@ const icon = (path) => {
   svg.setAttribute("stroke", "currentColor");
   svg.setAttribute("stroke-linecap", "round");
   svg.setAttribute("stroke-linejoin", "round");
-  svg.setAttribute("stroke-width", "2");
+  svg.setAttribute("stroke-width", strokeWidth);
   svg.setAttribute("viewBox", "0 0 24 24");
   svg.setAttribute("width", "var(--ds-button-icon-size)");
   svg.innerHTML = path;
@@ -22,16 +22,20 @@ const icon = (path) => {
 };
 
 const searchIcon = () =>
-  icon('<circle cx="11" cy="11" r="6" /><path d="m16 16 4 4" />');
+  icon(
+    '<path d="M21 21L16.7 16.7M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" />',
+    "1.5",
+  );
 
-const arrowRightIcon = () => icon('<path d="M5 12h14M13 6l6 6-6 6" />');
+const arrowUpRightIcon = () =>
+  icon('<path d="M17 17V7H7M17 7L7 17" />', "1.5");
 
 const button = ({
   disabled = false,
-  label = "Save changes",
+  label = "Button",
   leadingIcon = false,
   onClick,
-  size = "medium",
+  size = "small",
   trailingIcon = false,
   variant = "primary",
 } = {}) => {
@@ -49,7 +53,7 @@ const button = ({
   content.textContent = label;
   control.append(content);
 
-  if (trailingIcon) control.append(arrowRightIcon());
+  if (trailingIcon) control.append(arrowUpRightIcon());
   component.append(control);
 
   return component;
@@ -76,9 +80,9 @@ export default {
   component: "ds-button",
   args: {
     disabled: false,
-    label: "Save changes",
+    label: "Button",
     leadingIcon: false,
-    size: "medium",
+    size: "small",
     trailingIcon: false,
     variant: "primary",
     onClick: fn(),
@@ -109,11 +113,11 @@ export const Playground = {};
 export const Variants = {
   render: () =>
     group([
-      { variant: "primary" },
-      { variant: "secondary" },
-      { variant: "outline" },
-      { variant: "ghost" },
-      { variant: "destructive" },
+      { size: "medium", variant: "primary" },
+      { size: "medium", variant: "secondary" },
+      { size: "medium", variant: "outline" },
+      { size: "medium", variant: "ghost" },
+      { size: "medium", variant: "destructive" },
     ]),
   parameters: { controls: { disable: true }, design: figma },
 };
@@ -121,12 +125,13 @@ export const Variants = {
 export const FigmaExamples = {
   render: () =>
     group([
-      { label: "Save changes", variant: "primary" },
-      { label: "Delete", variant: "destructive" },
-      { label: "Search", leadingIcon: true, variant: "outline" },
-      { label: "Continue", trailingIcon: true, variant: "primary" },
+      { label: "Save changes", size: "medium", variant: "primary" },
+      { label: "Delete project", size: "medium", variant: "destructive" },
+      { label: "Search", leadingIcon: true, size: "medium", variant: "outline" },
+      { label: "Continue", size: "medium", trailingIcon: true, variant: "primary" },
       {
-        label: "Send report to all selected team members",
+        label: "Save changes and continue",
+        size: "medium",
         variant: "secondary",
       },
     ]),
