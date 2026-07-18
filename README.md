@@ -1,17 +1,12 @@
-# Maria's web Storybook
+# Maria Web Storybook
 
-This Storybook is a focused visual catalogue of implemented components and
-their Figma artboard examples. It intentionally omits generated Docs pages,
-controls, and engineering-only demo stories.
+Storybook is the visual verification surface for the public package. It loads
+the components from `@maria-ms/components-web` and the generated theme CSS from
+`@maria-ms/tokens`; it does not duplicate component CSS or token values.
 
-## Install
+## Run locally
 
-```sh
-npm install
-```
-
-For local development against the adjacent packages, install Storybook first,
-then build tokens and link the local tokens and components packages:
+Build and link the adjacent packages first:
 
 ```sh
 cd ../tokens
@@ -24,29 +19,34 @@ npm install
 npm link
 
 cd ../storybook-web
+npm install
 npm link @maria-ms/tokens @maria-ms/components-web
-```
-
-This makes Storybook use the local `../tokens` and `../components-web` folders
-instead of the published npm packages.
-
-`../tokens` must be built before running or building Storybook because Storybook
-imports generated files from `@maria-ms/tokens/css/light` and
-`@maria-ms/tokens/css/dark`. Rebuild `../tokens` after changing token sources so
-those CSS entry points resolve to fresh generated files.
-
-## Develop
-
-```sh
 npm run dev
 ```
 
-## Build
+## Story rule
 
-```sh
-npm run build
-```
+Create stories from the canonical component page in Figma, not from imagined
+permutations. The source hierarchy is: Figma canonical component and examples
+for the public contract; `tokens/dist` for visual values; the approved shared
+icon/asset source for reusable child assets. Do not use a Figma screenshot,
+copied colour value or a story-only substitute as a component asset.
 
-The app imports individual component entry points from
-`@maria-ms/components-web` and the light/dark CSS token entry points from
-`@maria-ms/tokens`.
+For each component:
+
+1. `Playground` exposes only documented public choices as Controls and uses
+   the real semantic HTML element. Native events appear in Actions.
+2. A compact `Variants` or `Sizes` story reflects the canonical component set
+   when that set is useful for comparison.
+3. `FigmaExamples` mirrors the page's composition/examples frame, using the
+   approved icon or other child assets referenced there.
+4. Native states use the real mechanism (`disabled`, focus interaction, etc.).
+   Do not add an artificial Storybook control for hover, focus-visible or
+   pressed unless the component API actually exposes one.
+
+The Button story keeps its SVGs in the story because they demonstrate
+consumer-supplied child content. They are not a Button asset or a second icon
+library. Reusable icons belong in the approved icon source, then are consumed
+by both Figma and code.
+
+Run `npm run check` for syntax validation and `npm run build` before handoff.

@@ -1,189 +1,138 @@
 import "@maria-ms/components-web/button";
 import { fn } from "storybook/test";
-import {
-  escapeHtml,
-  renderStoryGroup,
-  setAttributes,
-  sourceAttributes,
-  sourceStoryGroup,
-  staticStoryParametersFor,
-  storyParameters,
-} from "./story-helpers.mjs";
 
-const plusIcon = () => {
+const figmaUrl =
+  "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022001-53&m=dev";
+
+const icon = (path) => {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("fill", "none");
+  svg.setAttribute("height", "var(--ds-button-icon-size)");
+  svg.setAttribute("stroke", "currentColor");
+  svg.setAttribute("stroke-linecap", "round");
+  svg.setAttribute("stroke-linejoin", "round");
+  svg.setAttribute("stroke-width", "2");
   svg.setAttribute("viewBox", "0 0 24 24");
   svg.setAttribute("width", "var(--ds-button-icon-size)");
-  svg.setAttribute("height", "var(--ds-button-icon-size)");
-  svg.setAttribute("fill", "none");
-  svg.setAttribute("stroke", "currentColor");
-  svg.setAttribute("stroke-width", "2");
-  svg.setAttribute("aria-hidden", "true");
-  svg.innerHTML = '<path d="M12 5v14M5 12h14" stroke-linecap="round" />';
+  svg.innerHTML = path;
 
   return svg;
 };
 
-const wrapperAttributes = (state) => ({
-  "icon-only": state.iconOnly,
-  size: state.size,
-  tone: state.tone,
-  variant: state.variant,
-});
+const searchIcon = () =>
+  icon('<circle cx="11" cy="11" r="6" /><path d="m16 16 4 4" />');
 
-const renderButton = (state) => {
-  const wrapper = document.createElement("ds-button");
-  const control = document.createElement(state.href ? "a" : "button");
+const arrowRightIcon = () => icon('<path d="M5 12h14M13 6l6 6-6 6" />');
 
-  setAttributes(wrapper, wrapperAttributes(state));
-  if (state.href) {
-    control.href = state.href;
-    if (state.disabled) control.setAttribute("aria-disabled", "true");
-  } else {
-    control.type = state.submit ? "submit" : "button";
-    control.disabled = Boolean(state.disabled);
-  }
-  if (state.onClick) control.addEventListener("click", state.onClick);
+const button = ({
+  disabled = false,
+  label = "Save changes",
+  leadingIcon = false,
+  onClick,
+  size = "medium",
+  trailingIcon = false,
+  variant = "primary",
+} = {}) => {
+  const component = document.createElement("ds-button");
+  const control = document.createElement("button");
 
-  if (state.iconOnly) {
-    control.setAttribute("aria-label", state.label);
-    control.append(plusIcon());
-  } else {
-    control.append(state.label);
-  }
+  component.setAttribute("size", size);
+  component.setAttribute("variant", variant);
+  control.disabled = disabled;
+  control.type = "button";
+  if (onClick) control.addEventListener("click", onClick);
+  if (leadingIcon) control.append(searchIcon());
 
-  wrapper.append(control);
+  const content = document.createElement("span");
+  content.textContent = label;
+  control.append(content);
 
-  return wrapper;
+  if (trailingIcon) control.append(arrowRightIcon());
+  component.append(control);
+
+  return component;
 };
 
-const sourceButton = (state) => {
-  const wrapper = sourceAttributes(wrapperAttributes(state));
-  const content = state.iconOnly
-    ? '\n    <svg aria-hidden="true"><!-- icon --></svg>\n  '
-    : escapeHtml(state.label);
+const group = (items) => {
+  const element = document.createElement("div");
 
-  if (state.href) {
-    const attributes = sourceAttributes({
-      href: state.href,
-      "aria-disabled": state.disabled,
-      "aria-label": state.iconOnly ? state.label : "",
-    });
-
-    return `<ds-button${wrapper}>\n  <a${attributes}>${content}</a>\n</ds-button>`;
-  }
-
-  const attributes = sourceAttributes({
-    type: state.submit ? "submit" : "button",
-    disabled: state.disabled,
-    "aria-label": state.iconOnly ? state.label : "",
-  });
-
-  return `<ds-button${wrapper}>\n  <button${attributes}>${content}</button>\n</ds-button>`;
-};
-
-const parametersFor = (state, design) => ({
-  ...storyParameters(sourceButton(state), design),
-});
-
-const renderGroup = (items) =>
-  renderStoryGroup(items, renderButton, {
+  Object.assign(element.style, {
     alignItems: "center",
-    gap: "var(--ds-primitive-space-05)",
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "var(--ds-semantic-spacing-md)",
   });
+  element.append(...items.map(button));
 
-const groupParameters = (items, design) => ({
-  ...staticStoryParametersFor(sourceStoryGroup(items, sourceButton), design),
-});
+  return element;
+};
 
-const button = (state = {}) => ({
-  label: "Button",
-  size: "md",
-  variant: "primary",
-  ...state,
-});
+const figma = { type: "figma", url: figmaUrl };
 
-const variants = [
-  "primary",
-  "secondary",
-  "outline",
-  "ghost",
-  "link",
-  "link-muted",
-].map((variant) => button({ variant }));
-
-const sizes = ["xs", "sm", "md", "lg"].map((size) => button({ size }));
-
-const iconButtons = ["xs", "sm", "md", "lg"].map((size) =>
-  button({ iconOnly: true, label: "Add item", size }),
-);
-
-const meta = {
+export default {
   title: "Components/Button",
   component: "ds-button",
-  render: renderButton,
   args: {
-    ...button(),
+    disabled: false,
+    label: "Save changes",
+    leadingIcon: false,
+    size: "medium",
+    trailingIcon: false,
+    variant: "primary",
     onClick: fn(),
   },
   argTypes: {
-    label: { control: "text", table: { category: "Content" } },
     variant: {
       control: "select",
-      options: ["primary", "secondary", "outline", "ghost", "link", "link-muted"],
-      table: { category: "Appearance" },
-    },
-    tone: {
-      control: "select",
-      options: ["", "destructive"],
+      options: ["primary", "secondary", "outline", "ghost", "destructive"],
       table: { category: "Appearance" },
     },
     size: {
       control: "select",
-      options: ["xs", "sm", "md", "lg"],
+      options: ["small", "medium", "large"],
       table: { category: "Appearance" },
     },
-    iconOnly: {
-      control: "boolean",
-      name: "icon-only",
-      table: { category: "Appearance" },
-    },
-    disabled: { control: "boolean", table: { category: "State" } },
-    href: { control: "text", table: { category: "Semantics" } },
-    submit: { control: "boolean", table: { category: "Semantics" } },
-    onClick: { control: false, table: { category: "Events" } },
-    items: { control: false, table: { disable: true } },
+    disabled: { control: "boolean", table: { category: "Native state" } },
+    label: { control: "text", table: { category: "Content" } },
+    leadingIcon: { control: "boolean", table: { category: "Content" } },
+    trailingIcon: { control: "boolean", table: { category: "Content" } },
+    onClick: { action: "click", control: false, table: { category: "Events" } },
   },
-  parameters: parametersFor(button(), "40002012:9001"),
+  parameters: { design: figma },
+  render: button,
 };
 
-export default meta;
-
-export const Default = {
-  args: button(),
-  parameters: parametersFor(button(), "40002012:9001"),
-};
+export const Playground = {};
 
 export const Variants = {
-  args: { items: variants },
-  render: ({ items }) => renderGroup(items),
-  parameters: groupParameters(variants, "40002012:8988"),
+  render: () =>
+    group([
+      { variant: "primary" },
+      { variant: "secondary" },
+      { variant: "outline" },
+      { variant: "ghost" },
+      { variant: "destructive" },
+    ]),
+  parameters: { controls: { disable: true }, design: figma },
 };
 
-export const Sizes = {
-  args: { items: sizes },
-  render: ({ items }) => renderGroup(items),
-  parameters: groupParameters(sizes, "40002012:8988"),
+export const FigmaExamples = {
+  render: () =>
+    group([
+      { label: "Save changes", variant: "primary" },
+      { label: "Delete", variant: "destructive" },
+      { label: "Search", leadingIcon: true, variant: "outline" },
+      { label: "Continue", trailingIcon: true, variant: "primary" },
+      {
+        label: "Send report to all selected team members",
+        variant: "secondary",
+      },
+    ]),
+  parameters: { controls: { disable: true }, design: figma },
 };
 
-export const Destructive = {
-  args: button({ tone: "destructive" }),
-  parameters: parametersFor(button({ tone: "destructive" }), "40020628:2911"),
-};
-
-export const IconOnly = {
-  args: { items: iconButtons },
-  render: ({ items }) => renderGroup(items),
-  parameters: groupParameters(iconButtons, "40002020:11358"),
+export const Disabled = {
+  args: { disabled: true },
 };
