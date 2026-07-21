@@ -1,7 +1,7 @@
 import "@maria-ms/components-web/spinner";
 
 const figmaUrl =
-  "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022096-53&m=dev";
+  "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022096-52&m=dev";
 
 const spinner = ({ size = "small" } = {}) => {
   const component = document.createElement("ds-spinner");

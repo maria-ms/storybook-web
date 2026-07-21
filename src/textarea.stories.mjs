@@ -53,12 +53,12 @@ export default {
     name: { control: "text", table: { category: "Native textarea" } },
     placeholder: {
       control: "text",
-      description: "Native textarea placeholder. This is the Figma Preview text mapping, not a ds-textarea attribute.",
+      description: "Native textarea placeholder. It is not shown by the current Figma page and is not a ds-textarea attribute.",
       table: { category: "Native textarea" },
     },
     value: {
       control: "text",
-      description: "Native textarea value. This is the Figma Value preview mapping, not a ds-textarea attribute.",
+      description: "Native textarea value. This is the Figma Preview value mapping, not a ds-textarea attribute.",
       table: { category: "Native textarea" },
     },
     rows: {
