@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "storybook dev -p 6006",
     "build": "storybook build",
-    "check": "node --check .storybook/main.mjs && node --check .storybook/preview.mjs && node --check src/button.stories.mjs && node --check src/icon-button.stories.mjs && node --check src/spinner.stories.mjs"
+    "check": "node --check .storybook/main.mjs && node --check .storybook/preview.mjs && node --check src/button.stories.mjs && node --check src/icon-button.stories.mjs && node --check src/spinner.stories.mjs && node --check src/text-input.stories.mjs"
   },
   "dependencies": {
     "@maria-ms/components-web": "^1.0.0",
