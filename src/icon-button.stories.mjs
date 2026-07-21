@@ -69,7 +69,7 @@ export default {
     accessibleName: {
       control: "text",
       description: "Story fixture mapped to the inner native button's aria-label.",
-      table: { category: "Native accessibility" },
+      table: { category: "Story fixture" },
     },
     onClick: { action: "click", control: false, table: { category: "Events" } },
   },

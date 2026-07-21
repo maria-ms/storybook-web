@@ -2,7 +2,7 @@ import "@maria-ms/components-web/button";
 import { fn } from "storybook/test";
 
 const figmaUrl =
-  "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022001-53&m=dev";
+  "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022001-52&m=dev";
 
 const icon = (path, strokeWidth = "2") => {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -85,9 +85,21 @@ export default {
       table: { category: "Appearance" },
     },
     disabled: { control: "boolean", table: { category: "Native state" } },
-    label: { control: "text", table: { category: "Content" } },
-    leadingIcon: { control: "boolean", table: { category: "Content" } },
-    trailingIcon: { control: "boolean", table: { category: "Content" } },
+    label: {
+      control: "text",
+      description: "Story fixture mapped to text inside the inner native button; not a ds-button attribute.",
+      table: { category: "Story fixture" },
+    },
+    leadingIcon: {
+      control: "boolean",
+      description: "Story fixture mapped to the first decorative child of the inner native button; not a ds-button attribute.",
+      table: { category: "Story fixture" },
+    },
+    trailingIcon: {
+      control: "boolean",
+      description: "Story fixture mapped to the last decorative child of the inner native button; not a ds-button attribute.",
+      table: { category: "Story fixture" },
+    },
     onClick: { action: "click", control: false, table: { category: "Events" } },
   },
   parameters: { design: figma },
