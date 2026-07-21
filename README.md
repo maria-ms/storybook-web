@@ -36,10 +36,11 @@ For each component:
 
 1. `Playground` exposes only documented public choices as Controls and uses
    the real semantic HTML element. Native events appear in Actions.
-2. A compact `Variants` or `Sizes` story reflects the canonical component set
-   when that set is useful for comparison.
-3. `FigmaExamples` mirrors the page's composition/examples frame, using the
-   approved icon or other child assets referenced there.
+2. Add one fixed named story only when it proves a meaningful state,
+   composition, content stress case, or behaviour that a consumer cannot
+   clearly inspect through Playground Controls.
+3. Do not create a variant/size matrix or duplicate every Figma example.
+   Light and dark are selected from the global toolbar.
 4. Native states use the real mechanism (`disabled`, focus interaction, etc.).
    Do not add an artificial Storybook control for hover, focus-visible or
    pressed unless the component API actually exposes one.

@@ -59,20 +59,6 @@ const button = ({
   return component;
 };
 
-const group = (items) => {
-  const element = document.createElement("div");
-
-  Object.assign(element.style, {
-    alignItems: "center",
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "var(--ds-semantic-spacing-md)",
-  });
-  element.append(...items.map(button));
-
-  return element;
-};
-
 const figma = { type: "figma", url: figmaUrl };
 
 export default {
@@ -109,35 +95,3 @@ export default {
 };
 
 export const Playground = {};
-
-export const Variants = {
-  render: () =>
-    group([
-      { size: "medium", variant: "primary" },
-      { size: "medium", variant: "secondary" },
-      { size: "medium", variant: "outline" },
-      { size: "medium", variant: "ghost" },
-      { size: "medium", variant: "destructive" },
-    ]),
-  parameters: { controls: { disable: true }, design: figma },
-};
-
-export const FigmaExamples = {
-  render: () =>
-    group([
-      { label: "Save changes", size: "medium", variant: "primary" },
-      { label: "Delete project", size: "medium", variant: "destructive" },
-      { label: "Search", leadingIcon: true, size: "medium", variant: "outline" },
-      { label: "Continue", size: "medium", trailingIcon: true, variant: "primary" },
-      {
-        label: "Save changes and continue",
-        size: "medium",
-        variant: "secondary",
-      },
-    ]),
-  parameters: { controls: { disable: true }, design: figma },
-};
-
-export const Disabled = {
-  args: { disabled: true },
-};
