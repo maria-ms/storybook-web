@@ -1,7 +1,7 @@
 import "@maria-ms/components-web/select";
 
 const figmaUrl =
-  "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022281-236&m=dev";
+  "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022275-59039&m=dev";
 
 const countryOptions = [
   ["", "Select a country", true],
