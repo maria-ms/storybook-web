@@ -67,7 +67,8 @@ export default {
     name: { control: "text", table: { category: "Native Select" } },
     value: {
       control: "text",
-      description: "Story fixture mapped to the native select value; it is not a ds-select attribute.",
+      description:
+        "Story fixture mapped to the native select value; it is not a ds-select attribute.",
       table: { category: "Native Select" },
     },
     options: { control: false, table: { disable: true } },
@@ -75,7 +76,8 @@ export default {
     disabled: { control: "boolean", table: { category: "Native state" } },
     ariaInvalid: {
       control: "boolean",
-      description: "Maps to aria-invalid=\"true\" on the native select; it is not a ds-select attribute.",
+      description:
+        'Maps to aria-invalid="true" on the native select; it is not a ds-select attribute.',
       table: { category: "Native validation" },
     },
   },
