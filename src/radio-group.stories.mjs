@@ -12,23 +12,23 @@ const options = [
 ];
 
 const radioGroup = ({
-  ariaInvalid = false,
-  disabled = false,
   description = "Choose one way we can contact you.",
   error = "Select one option.",
   legend = "Contact preference",
-  name = "contact-preference",
-  required = true,
   selected = "email",
   showDescription = true,
+  state = "default",
 } = {}) => {
   const component = document.createElement("ds-radio-group");
   const fieldset = document.createElement("fieldset");
   const legendElement = document.createElement("legend");
+  const isDisabled = state === "disabled";
+  const isError = state === "error";
+  const name = "contact-preference";
 
   legendElement.textContent = legend;
   fieldset.append(legendElement);
-  fieldset.disabled = disabled;
+  fieldset.disabled = isDisabled;
 
   if (showDescription) {
     const descriptionElement = document.createElement("p");
@@ -49,8 +49,8 @@ const radioGroup = ({
     input.type = "radio";
     input.name = name;
     input.value = option.value;
-    input.required = required && index === 0;
-    input.checked = selected === option.value;
+    input.required = index === 0;
+    input.checked = !isError && selected === option.value;
     radio.append(input);
     label.slot = "label";
     label.textContent = option.label;
@@ -73,7 +73,7 @@ const radioGroup = ({
   errorElement.hidden = true;
   errorElement.textContent = error;
   fieldset.append(errorElement);
-  if (ariaInvalid) fieldset.setAttribute("aria-invalid", "true");
+  if (isError) fieldset.setAttribute("aria-invalid", "true");
   component.append(fieldset);
   return component;
 };
@@ -82,17 +82,21 @@ export default {
   title: "Components/Radio Group",
   component: "ds-radio-group",
   args: {
-    ariaInvalid: false,
-    disabled: false,
     description: "Choose one way we can contact you.",
     error: "Select one option.",
     legend: "Contact preference",
-    name: "contact-preference",
-    required: true,
     selected: "email",
     showDescription: true,
+    state: "default",
   },
   argTypes: {
+    state: {
+      control: "select",
+      options: ["default", "error", "disabled"],
+      description:
+        "Story fixture: Error maps to fieldset aria-invalid with no selection; Disabled maps to fieldset disabled.",
+      table: { category: "Preview" },
+    },
     legend: {
       control: "text",
       description: "Native fieldset legend; not a ds-radio-group attribute.",
@@ -116,20 +120,8 @@ export default {
     selected: {
       control: "select",
       options: ["email", "phone", "text", "none"],
-      description: "Story fixture for the checked native radio value.",
+      description: "Checked native radio value. Error always clears the selection.",
       table: { category: "Story fixture" },
-    },
-    name: { control: "text", table: { category: "Native radios" } },
-    required: { control: "boolean", table: { category: "Native validation" } },
-    ariaInvalid: {
-      control: "boolean",
-      description: "Maps to aria-invalid on the native fieldset after the owner chooses to show a group error.",
-      table: { category: "Native validation" },
-    },
-    disabled: {
-      control: "boolean",
-      description: "Native fieldset disabled state; not a ds-radio-group attribute.",
-      table: { category: "Native state" },
     },
   },
   parameters: {
