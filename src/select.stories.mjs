@@ -77,7 +77,7 @@ export default {
     ariaInvalid: {
       control: "boolean",
       description:
-        'Maps to aria-invalid="true" on the native select; it is not a ds-select attribute.',
+        'Story fixture that sets aria-invalid="true" on the native select. Field normally derives this from native validity after validation interaction; it is not a ds-select attribute.',
       table: { category: "Native validation" },
     },
   },
