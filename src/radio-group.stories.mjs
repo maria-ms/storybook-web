@@ -13,6 +13,7 @@ const options = [
 
 const radioGroup = ({
   ariaInvalid = false,
+  disabled = false,
   description = "Choose one way we can contact you.",
   error = "Select one option.",
   legend = "Contact preference",
@@ -27,6 +28,7 @@ const radioGroup = ({
 
   legendElement.textContent = legend;
   fieldset.append(legendElement);
+  fieldset.disabled = disabled;
 
   if (showDescription) {
     const descriptionElement = document.createElement("p");
@@ -81,6 +83,7 @@ export default {
   component: "ds-radio-group",
   args: {
     ariaInvalid: false,
+    disabled: false,
     description: "Choose one way we can contact you.",
     error: "Select one option.",
     legend: "Contact preference",
@@ -122,6 +125,11 @@ export default {
       control: "boolean",
       description: "Maps to aria-invalid on the native fieldset after the owner chooses to show a group error.",
       table: { category: "Native validation" },
+    },
+    disabled: {
+      control: "boolean",
+      description: "Native fieldset disabled state; not a ds-radio-group attribute.",
+      table: { category: "Native state" },
     },
   },
   parameters: {

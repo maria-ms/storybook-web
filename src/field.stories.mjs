@@ -1,5 +1,8 @@
 import "@maria-ms/components-web/field";
+import "@maria-ms/components-web/number-input";
+import "@maria-ms/components-web/select";
 import "@maria-ms/components-web/text-input";
+import "@maria-ms/components-web/textarea";
 import { fn } from "storybook/test";
 
 const figmaUrl =
@@ -99,3 +102,67 @@ export default {
 };
 
 export const Playground = {};
+
+export const SupportedControls = {
+  parameters: { controls: { disable: true } },
+  render: () => {
+    const examples = document.createElement("div");
+
+    examples.style.cssText = "display: grid; gap: 24px;";
+
+    const createField = (label, controlWrapper, control, message) => {
+      const component = document.createElement("ds-field");
+      const labelElement = document.createElement("label");
+      const messageElement = document.createElement("p");
+
+      labelElement.slot = "label";
+      labelElement.textContent = label;
+      controlWrapper.slot = "control";
+      controlWrapper.append(control);
+      messageElement.slot = "message";
+      messageElement.textContent = message;
+      component.append(labelElement, controlWrapper, messageElement);
+      return component;
+    };
+
+    const textInput = document.createElement("input");
+
+    textInput.type = "email";
+    textInput.placeholder = "name@example.com";
+    examples.append(
+      createField("Email address", document.createElement("ds-text-input"), textInput, "Account updates only."),
+    );
+
+    const textarea = document.createElement("textarea");
+
+    textarea.placeholder = "Tell us more";
+    examples.append(
+      createField("Message", document.createElement("ds-textarea"), textarea, "Maximum 500 characters."),
+    );
+
+    const selectWrapper = document.createElement("ds-select");
+    const select = document.createElement("select");
+    const selectButton = document.createElement("button");
+    const selectedContent = document.createElement("selectedcontent");
+    const placeholderOption = new Option("Choose a country", "");
+
+    selectWrapper.setAttribute("size", "medium");
+    placeholderOption.disabled = true;
+    selectButton.append(selectedContent);
+    select.append(selectButton, placeholderOption, new Option("Romania", "ro"));
+    examples.append(
+      createField("Country", selectWrapper, select, "Used for regional settings."),
+    );
+
+    const numberInput = document.createElement("input");
+
+    numberInput.type = "number";
+    numberInput.min = "1";
+    numberInput.value = "1";
+    examples.append(
+      createField("Quantity", document.createElement("ds-number-input"), numberInput, "Choose at least one."),
+    );
+
+    return examples;
+  },
+};
