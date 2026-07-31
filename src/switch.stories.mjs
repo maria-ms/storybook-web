@@ -6,6 +6,7 @@ const figmaUrl =
 const switchControl = ({
   checked = false,
   disabled = false,
+  invalid = false,
   label = "Email notifications",
   name = "notifications",
   required = false,
@@ -25,6 +26,7 @@ const switchControl = ({
   control.checked = checked;
   control.disabled = disabled;
   control.required = required;
+  control.toggleAttribute("aria-invalid", invalid);
   component.append(control);
 
   copy.textContent = label;
@@ -42,6 +44,7 @@ export default {
   args: {
     checked: false,
     disabled: false,
+    invalid: false,
     label: "Email notifications",
     name: "notifications",
     required: false,
@@ -58,22 +61,27 @@ export default {
       control: "boolean",
       description:
         "Native checkbox checked state. It is not a ds-switch attribute.",
-      table: { category: "Native state" },
+      table: { category: "Native behavior" },
     },
     disabled: {
       control: "boolean",
       description:
         "Native checkbox disabled state. It is not a ds-switch attribute.",
-      table: { category: "Native state" },
+      table: { category: "Native behavior" },
     },
-    name: { control: "text", table: { category: "Native checkbox" } },
-    value: { control: "text", table: { category: "Native checkbox" } },
-    required: { control: "boolean", table: { category: "Native validation" } },
+    name: { control: "text", table: { category: "Native behavior" } },
+    value: { control: "text", table: { category: "Native behavior" } },
+    required: { control: "boolean", table: { category: "Native behavior" } },
+    invalid: {
+      control: "boolean",
+      description: "Maps to aria-invalid=\"true\" on the native checkbox.",
+      table: { category: "Validation" },
+    },
     label: {
       control: "text",
       description:
         "Fixture-only native label content. It is not a ds-switch property.",
-      table: { category: "Story fixture" },
+      table: { category: "Content" },
     },
   },
   parameters: {

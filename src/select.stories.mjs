@@ -11,7 +11,7 @@ const countryOptions = [
 ];
 
 const select = ({
-  ariaInvalid = false,
+  invalid = false,
   disabled = false,
   name = "country",
   options = countryOptions,
@@ -28,7 +28,7 @@ const select = ({
   control.name = name;
   control.disabled = disabled;
   control.required = required;
-  if (ariaInvalid) control.setAttribute("aria-invalid", "true");
+  control.toggleAttribute("aria-invalid", invalid);
   button.append(selectedContent);
   control.append(button);
 
@@ -51,7 +51,7 @@ export default {
   title: "Components/Select",
   component: "ds-select",
   args: {
-    ariaInvalid: false,
+    invalid: false,
     disabled: false,
     name: "country",
     required: false,
@@ -64,21 +64,21 @@ export default {
       options: ["small", "medium", "large"],
       table: { category: "Appearance" },
     },
-    name: { control: "text", table: { category: "Native Select" } },
+    name: { control: "text", table: { category: "Native behavior" } },
     value: {
       control: "text",
       description:
-        "Story fixture mapped to the native select value; it is not a ds-select attribute.",
-      table: { category: "Native Select" },
+        "Native select value; it is not a ds-select attribute.",
+      table: { category: "Content" },
     },
     options: { control: false, table: { disable: true } },
-    required: { control: "boolean", table: { category: "Native validation" } },
-    disabled: { control: "boolean", table: { category: "Native state" } },
-    ariaInvalid: {
+    required: { control: "boolean", table: { category: "Native behavior" } },
+    disabled: { control: "boolean", table: { category: "Native behavior" } },
+    invalid: {
       control: "boolean",
       description:
-        'Story fixture that sets aria-invalid="true" on the native select. Field normally derives this from native validity after validation interaction; it is not a ds-select attribute.',
-      table: { category: "Native validation" },
+        'Maps to aria-invalid="true" on the native select; it is not a ds-select attribute.',
+      table: { category: "Validation" },
     },
   },
   parameters: {

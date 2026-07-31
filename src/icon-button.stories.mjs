@@ -1,5 +1,4 @@
-import "@maria-ms/components-web/button";
-import { fn } from "storybook/test";
+import "@maria-ms/components-web/icon-button";
 
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022001-52&m=dev";
@@ -25,7 +24,6 @@ const searchIcon = () => {
 const iconButton = ({
   accessibleName = "Search",
   disabled = false,
-  onClick,
   size = "small",
   variant = "primary",
 } = {}) => {
@@ -37,7 +35,6 @@ const iconButton = ({
   control.setAttribute("aria-label", accessibleName);
   control.disabled = disabled;
   control.type = "button";
-  if (onClick) control.addEventListener("click", onClick);
   control.append(searchIcon());
   component.append(control);
 
@@ -52,7 +49,6 @@ export default {
     disabled: false,
     size: "small",
     variant: "primary",
-    onClick: fn(),
   },
   argTypes: {
     variant: {
@@ -65,13 +61,12 @@ export default {
       options: ["small", "medium", "large"],
       table: { category: "Appearance" },
     },
-    disabled: { control: "boolean", table: { category: "Native state" } },
+    disabled: { control: "boolean", table: { category: "Native behavior" } },
     accessibleName: {
       control: "text",
       description: "Story fixture mapped to the inner native button's aria-label.",
-      table: { category: "Story fixture" },
+      table: { category: "Accessibility" },
     },
-    onClick: { action: "click", control: false, table: { category: "Events" } },
   },
   parameters: { design: { type: "figma", url: figmaUrl } },
   render: iconButton,

@@ -1,15 +1,12 @@
 import "@maria-ms/components-web/textarea";
-import { fn } from "storybook/test";
 
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022294-52&m=dev";
 
 const textarea = ({
-  ariaInvalid = false,
+  invalid = false,
   disabled = false,
   name = "message",
-  onChange,
-  onInput,
   placeholder = "Type your message…",
   readOnly = false,
   required = false,
@@ -26,9 +23,7 @@ const textarea = ({
   control.disabled = disabled;
   control.readOnly = readOnly;
   control.required = required;
-  if (ariaInvalid) control.setAttribute("aria-invalid", "true");
-  if (onInput) control.addEventListener("input", onInput);
-  if (onChange) control.addEventListener("change", onChange);
+  control.toggleAttribute("aria-invalid", invalid);
   component.append(control);
 
   return component;
@@ -38,7 +33,7 @@ export default {
   title: "Components/Textarea",
   component: "ds-textarea",
   args: {
-    ariaInvalid: false,
+    invalid: false,
     disabled: false,
     name: "message",
     placeholder: "Type your message…",
@@ -46,36 +41,32 @@ export default {
     required: false,
     rows: 3,
     value: "Type your message…",
-    onInput: fn(),
-    onChange: fn(),
   },
   argTypes: {
-    name: { control: "text", table: { category: "Native textarea" } },
+    name: { control: "text", table: { category: "Native behavior" } },
     placeholder: {
       control: "text",
-      description: "Native textarea placeholder. It is not shown by the current Figma page and is not a ds-textarea attribute.",
-      table: { category: "Native textarea" },
+      description: "Native textarea placeholder; it is not a ds-textarea attribute.",
+      table: { category: "Content" },
     },
     value: {
       control: "text",
-      description: "Native textarea value. This is the Figma Preview value mapping, not a ds-textarea attribute.",
-      table: { category: "Native textarea" },
+      description: "Native textarea value; it is not a ds-textarea attribute.",
+      table: { category: "Content" },
     },
     rows: {
       control: { type: "number", min: 1, step: 1 },
       description: "Native textarea rows. The component's token-backed minimum height still applies.",
-      table: { category: "Native textarea" },
+      table: { category: "Native behavior" },
     },
-    disabled: { control: "boolean", table: { category: "Native state" } },
-    readOnly: { control: "boolean", table: { category: "Native state" } },
-    required: { control: "boolean", table: { category: "Native validation" } },
-    ariaInvalid: {
+    disabled: { control: "boolean", table: { category: "Native behavior" } },
+    readOnly: { control: "boolean", table: { category: "Native behavior" } },
+    required: { control: "boolean", table: { category: "Native behavior" } },
+    invalid: {
       control: "boolean",
       description: "Maps to aria-invalid=\"true\" on the native textarea; it is not a ds-textarea attribute.",
-      table: { category: "Native validation" },
+      table: { category: "Validation" },
     },
-    onInput: { action: "input", control: false, table: { category: "Events" } },
-    onChange: { action: "change", control: false, table: { category: "Events" } },
   },
   parameters: { design: { type: "figma", url: figmaUrl } },
   render: textarea,

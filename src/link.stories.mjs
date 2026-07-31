@@ -1,5 +1,4 @@
 import "@maria-ms/components-web/link";
-import { fn } from "storybook/test";
 
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022819-6&m=dev";
@@ -7,7 +6,6 @@ const figmaUrl =
 const link = ({
   href = "#accessibility-guide",
   label = "Read the accessibility guide.",
-  onClick,
   rel = "",
   size = "x-small",
   target = "_self",
@@ -21,7 +19,6 @@ const link = ({
   anchor.href = href;
   anchor.target = target;
   if (rel) anchor.rel = rel;
-  if (onClick) anchor.addEventListener("click", onClick);
   anchor.textContent = label;
   component.append(anchor);
 
@@ -34,7 +31,6 @@ export default {
   args: {
     href: "#accessibility-guide",
     label: "Read the accessibility guide.",
-    onClick: fn(),
     rel: "",
     size: "x-small",
     target: "_self",
@@ -54,25 +50,24 @@ export default {
     label: {
       control: "text",
       description: "Story fixture mapped to real anchor text and its accessible name; not a ds-link attribute.",
-      table: { category: "Story fixture" },
+      table: { category: "Content" },
     },
     href: {
       control: "text",
       description: "Native anchor href. It is not a ds-link attribute.",
-      table: { category: "Native anchor" },
+      table: { category: "Content" },
     },
     target: {
       control: "select",
       options: ["_self", "_blank", "_parent", "_top"],
       description: "Native anchor target. It is not a ds-link attribute.",
-      table: { category: "Native anchor" },
+      table: { category: "Native behavior" },
     },
     rel: {
       control: "text",
       description: "Native anchor rel. It is not a ds-link attribute.",
-      table: { category: "Native anchor" },
+      table: { category: "Native behavior" },
     },
-    onClick: { action: "click", control: false, table: { category: "Events" } },
   },
   parameters: { design: { type: "figma", url: figmaUrl } },
   render: link,

@@ -56,16 +56,16 @@ export default {
     checked: {
       control: "boolean",
       description: "Native radio checked state. It is not a ds-radio attribute.",
-      table: { category: "Native state" },
+      table: { category: "Native behavior" },
     },
-    disabled: { control: "boolean", table: { category: "Native state" } },
-    name: { control: "text", table: { category: "Native radio" } },
-    value: { control: "text", table: { category: "Native radio" } },
-    required: { control: "boolean", table: { category: "Native validation" } },
+    disabled: { control: "boolean", table: { category: "Native behavior" } },
+    name: { control: "text", table: { category: "Native behavior" } },
+    value: { control: "text", table: { category: "Native behavior" } },
+    required: { control: "boolean", table: { category: "Native behavior" } },
     label: {
       control: "text",
       description: "Fixture-only native label content; it is not a ds-radio property.",
-      table: { category: "Story fixture" },
+      table: { category: "Content" },
     },
   },
   parameters: {

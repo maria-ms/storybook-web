@@ -1,5 +1,4 @@
 import "@maria-ms/components-web/button";
-import { fn } from "storybook/test";
 
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022001-52&m=dev";
@@ -34,7 +33,6 @@ const button = ({
   disabled = false,
   label = "Button",
   leadingIcon = false,
-  onClick,
   size = "small",
   trailingIcon = false,
   variant = "primary",
@@ -46,7 +44,6 @@ const button = ({
   component.setAttribute("variant", variant);
   control.disabled = disabled;
   control.type = "button";
-  if (onClick) control.addEventListener("click", onClick);
   if (leadingIcon) control.append(searchIcon());
 
   const content = document.createElement("span");
@@ -71,7 +68,6 @@ export default {
     size: "small",
     trailingIcon: false,
     variant: "primary",
-    onClick: fn(),
   },
   argTypes: {
     variant: {
@@ -84,23 +80,22 @@ export default {
       options: ["small", "medium", "large"],
       table: { category: "Appearance" },
     },
-    disabled: { control: "boolean", table: { category: "Native state" } },
+  disabled: { control: "boolean", table: { category: "Native behavior" } },
     label: {
       control: "text",
       description: "Story fixture mapped to text inside the inner native button; not a ds-button attribute.",
-      table: { category: "Story fixture" },
+      table: { category: "Content" },
     },
     leadingIcon: {
       control: "boolean",
       description: "Story fixture mapped to the first decorative child of the inner native button; not a ds-button attribute.",
-      table: { category: "Story fixture" },
+      table: { category: "Content" },
     },
     trailingIcon: {
       control: "boolean",
       description: "Story fixture mapped to the last decorative child of the inner native button; not a ds-button attribute.",
-      table: { category: "Story fixture" },
+      table: { category: "Content" },
     },
-    onClick: { action: "click", control: false, table: { category: "Events" } },
   },
   parameters: { design: figma },
   render: button,

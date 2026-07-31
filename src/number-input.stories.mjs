@@ -1,17 +1,14 @@
 import "@maria-ms/components-web/number-input";
-import { fn } from "storybook/test";
 
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022324-53&m=dev";
 
 const numberInput = ({
-  ariaInvalid = false,
+  invalid = false,
   disabled = false,
   max = "",
   min = "",
   name = "quantity",
-  onChange,
-  onInput,
   placeholder = "0",
   readOnly = false,
   required = false,
@@ -33,9 +30,7 @@ const numberInput = ({
   if (min !== "") control.min = min;
   if (max !== "") control.max = max;
   if (step !== "") control.step = step;
-  if (ariaInvalid) control.setAttribute("aria-invalid", "true");
-  if (onInput) control.addEventListener("input", onInput);
-  if (onChange) control.addEventListener("change", onChange);
+  control.toggleAttribute("aria-invalid", invalid);
   component.append(control);
 
   return component;
@@ -45,7 +40,7 @@ export default {
   title: "Components/Number Input",
   component: "ds-number-input",
   args: {
-    ariaInvalid: false,
+    invalid: false,
     disabled: false,
     max: "",
     min: "",
@@ -56,8 +51,6 @@ export default {
     size: "small",
     step: "1",
     value: "",
-    onInput: fn(),
-    onChange: fn(),
   },
   argTypes: {
     size: {
@@ -65,30 +58,28 @@ export default {
       options: ["small", "medium", "large"],
       table: { category: "Appearance" },
     },
-    name: { control: "text", table: { category: "Native number input" } },
+    name: { control: "text", table: { category: "Native behavior" } },
     placeholder: {
       control: "text",
-      description: "Native number-input placeholder. This is the Figma Preview value/state mapping, not a ds-number-input attribute.",
-      table: { category: "Native number input" },
+      description: "Native number-input placeholder; it is not a ds-number-input attribute.",
+      table: { category: "Content" },
     },
     value: {
       control: "text",
-      description: "Native number-input value. This is the Figma Preview value/state mapping, not a ds-number-input attribute.",
-      table: { category: "Native number input" },
+      description: "Native number-input value; it is not a ds-number-input attribute.",
+      table: { category: "Content" },
     },
-    min: { control: "text", table: { category: "Native number input" } },
-    max: { control: "text", table: { category: "Native number input" } },
-    step: { control: "text", table: { category: "Native number input" } },
-    disabled: { control: "boolean", table: { category: "Native state" } },
-    readOnly: { control: "boolean", table: { category: "Native state" } },
-    required: { control: "boolean", table: { category: "Native validation" } },
-    ariaInvalid: {
+    min: { control: "text", table: { category: "Native behavior" } },
+    max: { control: "text", table: { category: "Native behavior" } },
+    step: { control: "text", table: { category: "Native behavior" } },
+    disabled: { control: "boolean", table: { category: "Native behavior" } },
+    readOnly: { control: "boolean", table: { category: "Native behavior" } },
+    required: { control: "boolean", table: { category: "Native behavior" } },
+    invalid: {
       control: "boolean",
       description: "Maps to aria-invalid=\"true\" on the native input; it is not a ds-number-input attribute.",
-      table: { category: "Native validation" },
+      table: { category: "Validation" },
     },
-    onInput: { action: "input", control: false, table: { category: "Events" } },
-    onChange: { action: "change", control: false, table: { category: "Events" } },
   },
   parameters: { design: { type: "figma", url: figmaUrl } },
   render: numberInput,

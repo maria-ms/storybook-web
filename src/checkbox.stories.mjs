@@ -4,7 +4,7 @@ const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022386-52&m=dev";
 
 const checkbox = ({
-  ariaInvalid = false,
+  invalid = false,
   checked = false,
   disabled = false,
   indeterminate = false,
@@ -24,7 +24,7 @@ const checkbox = ({
   control.indeterminate = indeterminate;
   control.disabled = disabled;
   control.required = required;
-  if (ariaInvalid) control.setAttribute("aria-invalid", "true");
+  control.toggleAttribute("aria-invalid", invalid);
   component.append(control);
 
   return component;
@@ -34,7 +34,7 @@ export default {
   title: "Components/Checkbox",
   component: "ds-checkbox",
   args: {
-    ariaInvalid: false,
+    invalid: false,
     checked: false,
     disabled: false,
     indeterminate: false,
@@ -52,21 +52,21 @@ export default {
     checked: {
       control: "boolean",
       description: "Native checkbox checked state. It is not a ds-checkbox attribute.",
-      table: { category: "Native state" },
+      table: { category: "Native behavior" },
     },
     indeterminate: {
       control: "boolean",
       description: "Maps to input.indeterminate. It is a native property, not an HTML or ds-checkbox attribute.",
-      table: { category: "Native state" },
+      table: { category: "Native behavior" },
     },
-    disabled: { control: "boolean", table: { category: "Native state" } },
-    name: { control: "text", table: { category: "Native checkbox" } },
-    value: { control: "text", table: { category: "Native checkbox" } },
-    required: { control: "boolean", table: { category: "Native validation" } },
-    ariaInvalid: {
+    disabled: { control: "boolean", table: { category: "Native behavior" } },
+    name: { control: "text", table: { category: "Native behavior" } },
+    value: { control: "text", table: { category: "Native behavior" } },
+    required: { control: "boolean", table: { category: "Native behavior" } },
+    invalid: {
       control: "boolean",
-      description: "Maps to aria-invalid=\"true\" on the native checkbox after the owner chooses to show validation.",
-      table: { category: "Native validation" },
+      description: "Maps to aria-invalid=\"true\" on the native checkbox.",
+      table: { category: "Validation" },
     },
   },
   parameters: {
