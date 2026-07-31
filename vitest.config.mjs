@@ -1,0 +1,27 @@
+import { defineConfig } from "vitest/config";
+
+import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
+import { playwright } from "@vitest/browser-playwright";
+
+export default defineConfig({
+  optimizeDeps: {
+    include: ["@testing-library/dom", "@testing-library/jest-dom"],
+  },
+  test: {
+    projects: [
+      {
+        extends: true,
+        plugins: [storybookTest()],
+        test: {
+          name: "storybook",
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright({}),
+            instances: [{ browser: "chromium" }],
+          },
+        },
+      },
+    ],
+  },
+});

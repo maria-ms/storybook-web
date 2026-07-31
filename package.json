@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "storybook dev -p 6006",
     "build": "storybook build",
+    "test:storybook": "vitest --project=storybook",
     "check": "node --check .storybook/main.mjs && node --check .storybook/preview.mjs && node --check src/button.stories.mjs && node --check src/checkbox.stories.mjs && node --check src/choice-field.stories.mjs && node --check src/field.stories.mjs && node --check src/icon-button.stories.mjs && node --check src/link.stories.mjs && node --check src/number-input.stories.mjs && node --check src/radio.stories.mjs && node --check src/radio-group.stories.mjs && node --check src/select.stories.mjs && node --check src/spinner.stories.mjs && node --check src/switch.stories.mjs && node --check src/text-input.stories.mjs && node --check src/textarea.stories.mjs"
   },
   "dependencies": {
@@ -14,9 +15,13 @@
     "@maria-ms/tokens": "^1.0.0"
   },
   "devDependencies": {
-    "@storybook/addon-themes": "latest",
-    "@storybook/web-components-vite": "latest",
-    "storybook": "^10.5.5",
-    "vite": "^8.1.2"
+    "@storybook/addon-themes": "10.5.5",
+    "@storybook/addon-vitest": "10.5.5",
+    "@storybook/web-components-vite": "10.5.5",
+    "@vitest/browser-playwright": "4.1.10",
+    "playwright": "1.62.1",
+    "storybook": "10.5.5",
+    "vite": "^8.1.2",
+    "vitest": "4.1.10"
   }
 }
