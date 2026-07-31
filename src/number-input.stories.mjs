@@ -30,7 +30,7 @@ const numberInput = ({
   if (min !== "") control.min = min;
   if (max !== "") control.max = max;
   if (step !== "") control.step = step;
-  control.toggleAttribute("aria-invalid", invalid);
+  invalid ? control.setAttribute("aria-invalid", "true") : control.removeAttribute("aria-invalid");
   component.append(control);
 
   return component;

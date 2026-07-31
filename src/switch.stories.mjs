@@ -26,7 +26,7 @@ const switchControl = ({
   control.checked = checked;
   control.disabled = disabled;
   control.required = required;
-  control.toggleAttribute("aria-invalid", invalid);
+  invalid ? control.setAttribute("aria-invalid", "true") : control.removeAttribute("aria-invalid");
   component.append(control);
 
   copy.textContent = label;

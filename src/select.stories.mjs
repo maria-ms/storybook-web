@@ -28,7 +28,7 @@ const select = ({
   control.name = name;
   control.disabled = disabled;
   control.required = required;
-  control.toggleAttribute("aria-invalid", invalid);
+  invalid ? control.setAttribute("aria-invalid", "true") : control.removeAttribute("aria-invalid");
   button.append(selectedContent);
   control.append(button);
 

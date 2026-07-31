@@ -25,7 +25,7 @@ const textInput = ({
   control.disabled = disabled;
   control.readOnly = readOnly;
   control.required = required;
-  control.toggleAttribute("aria-invalid", invalid);
+  invalid ? control.setAttribute("aria-invalid", "true") : control.removeAttribute("aria-invalid");
   component.append(control);
 
   return component;
