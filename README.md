@@ -34,20 +34,27 @@ copied colour value or a story-only substitute as a component asset.
 
 For each component:
 
-1. `Playground` exposes only documented public choices as Controls and uses
-   the real semantic HTML element. Native events appear in Actions.
-2. Add one fixed named story only when it proves a meaningful state,
-   composition, content stress case, or behaviour that a consumer cannot
-   clearly inspect through Playground Controls.
-3. Do not create a variant/size matrix or duplicate every Figma example.
-   Light and dark are selected from the global toolbar.
-4. Native states use the real mechanism (`disabled`, focus interaction, etc.).
-   Do not add an artificial Storybook control for hover, focus-visible or
-   pressed unless the component API actually exposes one.
+1. Export one `Playground` only. Its Controls expose real public component,
+   native HTML, or ARIA behaviour and use the real semantic HTML child.
+2. Do not expose Figma preview controls such as State, displayed content, or
+   picker-open. Native value, disabled, validation, and focus behaviour use the
+   browser's real mechanism.
+3. Compound Playgrounds demonstrate one valid composition through fixture
+   content and real child controls. Do not create a variant/size matrix or
+   duplicate every Figma example. Light and dark are selected from the global
+   toolbar.
+4. Add a `play` function only when custom composition or ownership behaviour
+   needs an assertion beyond a successful browser mount. Do not add event
+   actions or state-specific stories by default.
 
 The Button story keeps its SVGs in the story because they demonstrate
 consumer-supplied child content. They are not a Button asset or a second icon
 library. Reusable icons belong in the approved icon source, then are consumed
 by both Figma and code.
 
-Run `npm run check` for syntax validation and `npm run build` before handoff.
+Before handoff, run:
+
+```sh
+npm run build
+npm run test:storybook -- --run
+```
