@@ -25,7 +25,11 @@ const accordion = ({ openItem = "accessibility" } = {}) => {
     component.append(item);
   });
 
-  return component;
+  const fixture = document.createElement("div");
+  fixture.style.inlineSize = "var(--ds-semantic-container-sm)";
+  fixture.style.maxInlineSize = "100%";
+  fixture.append(component);
+  return fixture;
 };
 
 export default {
@@ -40,17 +44,22 @@ export default {
       table: { category: "Native behavior" },
     },
   },
-  parameters: { design: { type: "figma", url: figmaUrl } },
+  parameters: {
+    layout: "centered",
+    design: { type: "figma", url: figmaUrl },
+  },
   render: accordion,
 };
 
 export const Playground = {
   play: async ({ canvasElement }) => {
     const component = canvasElement.querySelector("ds-accordion");
+    const fixture = component.parentElement;
     const items = canvasElement.querySelectorAll("ds-accordion > details");
     const widthBeforeToggle = component.getBoundingClientRect().width;
 
     await expect(getComputedStyle(component).borderTopStyle).toBe("solid");
+    await expect(component.getBoundingClientRect().width).toBe(fixture.getBoundingClientRect().width);
     await expect(CSS.supports("selector(details::details-content)")).toBe(true);
     await expect(getComputedStyle(items[0], "::details-content").transitionProperty).toContain(
       "block-size",
