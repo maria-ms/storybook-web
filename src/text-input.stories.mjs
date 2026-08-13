@@ -1,4 +1,5 @@
 import "@maria-ms/components-web/text-input";
+import { expect } from "storybook/test";
 
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022178-257&m=dev";
@@ -28,7 +29,13 @@ const textInput = ({
   invalid ? control.setAttribute("aria-invalid", "true") : control.removeAttribute("aria-invalid");
   component.append(control);
 
-  return component;
+  const formColumn = document.createElement("div");
+  formColumn.dataset.storybookFormColumn = "";
+  formColumn.style.display = "block";
+  formColumn.style.inlineSize = "min(100%, 480px)";
+  formColumn.append(component);
+
+  return formColumn;
 };
 
 export default {
@@ -80,4 +87,13 @@ export default {
   render: textInput,
 };
 
-export const Playground = {};
+export const Playground = {
+  play: async ({ canvasElement }) => {
+    const formColumn = canvasElement.querySelector("[data-storybook-form-column]");
+    const component = formColumn.querySelector("ds-text-input");
+    const control = component.querySelector("input");
+
+    await expect(component.offsetWidth).toBe(formColumn.offsetWidth);
+    await expect(control.offsetWidth).toBe(component.offsetWidth);
+  },
+};
