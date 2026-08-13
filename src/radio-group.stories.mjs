@@ -1,6 +1,7 @@
 import "@maria-ms/components-web/choice-field";
 import "@maria-ms/components-web/radio";
 import "@maria-ms/components-web/radio-group";
+import { expect } from "storybook/test";
 
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022923-3&m=dev";
@@ -21,6 +22,7 @@ const radioGroup = ({
   selected = "email",
   showDescription = true,
 } = {}) => {
+  const showInvalid = invalid && !disabled;
   const component = document.createElement("ds-radio-group");
   const fieldset = document.createElement("fieldset");
   const legendElement = document.createElement("legend");
@@ -29,7 +31,7 @@ const radioGroup = ({
   legendElement.textContent = legend;
   fieldset.append(legendElement);
   fieldset.disabled = disabled;
-  invalid
+  showInvalid
     ? fieldset.setAttribute("aria-invalid", "true")
     : fieldset.removeAttribute("aria-invalid");
 
@@ -53,7 +55,7 @@ const radioGroup = ({
     input.name = name;
     input.value = option.value;
     input.required = required && index === 0;
-    input.checked = !invalid && selected === option.value;
+    input.checked = !showInvalid && selected === option.value;
     radio.append(input);
     label.slot = "label";
     label.textContent = option.label;
@@ -77,7 +79,15 @@ const radioGroup = ({
   errorElement.textContent = error;
   fieldset.append(errorElement);
   component.append(fieldset);
-  return component;
+
+  const formColumn = document.createElement("div");
+
+  formColumn.dataset.storybookFormColumn = "";
+  formColumn.style.display = "block";
+  formColumn.style.inlineSize = "480px";
+  formColumn.style.maxInlineSize = "100%";
+  formColumn.append(component);
+  return formColumn;
 };
 
 export default {
@@ -132,4 +142,35 @@ export default {
   render: radioGroup,
 };
 
-export const Playground = {};
+export const Playground = {
+  play: async ({ canvasElement }) => {
+    const formColumn = canvasElement.querySelector("[data-storybook-form-column]");
+    const component = formColumn.querySelector("ds-radio-group");
+    const fieldset = component.querySelector("fieldset");
+    const choiceFields = fieldset.querySelectorAll(":scope > ds-choice-field");
+    const error = fieldset.querySelector("[data-error]");
+
+    await expect(formColumn.offsetWidth).toBe(480);
+    await expect(component.offsetWidth).toBe(formColumn.offsetWidth);
+    await expect(fieldset.offsetWidth).toBe(component.offsetWidth);
+    await expect(choiceFields.length).toBe(3);
+
+    for (const choiceField of choiceFields) {
+      const radio = choiceField.querySelector("ds-radio");
+
+      await expect(choiceField.offsetWidth).toBe(fieldset.offsetWidth);
+      await expect(radio.offsetWidth).toBeGreaterThan(0);
+      await expect(radio.offsetWidth).toBeLessThan(choiceField.offsetWidth);
+    }
+
+    fieldset.setAttribute("aria-invalid", "true");
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await expect(error.hidden).toBe(false);
+    await expect(component.getAttribute("data-state")).toBe("error");
+
+    fieldset.disabled = true;
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await expect(error.hidden).toBe(true);
+    await expect(component.getAttribute("data-state")).toBe("disabled");
+  },
+};
