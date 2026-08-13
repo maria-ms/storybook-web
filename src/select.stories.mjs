@@ -1,4 +1,5 @@
 import "@maria-ms/components-web/select";
+import { expect } from "storybook/test";
 
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022275-59039&m=dev";
@@ -44,7 +45,14 @@ const select = ({
   control.value = value;
   component.append(control);
 
-  return component;
+  const formColumn = document.createElement("div");
+  formColumn.dataset.storybookFormColumn = "";
+  formColumn.style.display = "block";
+  formColumn.style.inlineSize = "480px";
+  formColumn.style.maxInlineSize = "100%";
+  formColumn.append(component);
+
+  return formColumn;
 };
 
 export default {
@@ -88,4 +96,14 @@ export default {
   render: select,
 };
 
-export const Playground = {};
+export const Playground = {
+  play: async ({ canvasElement }) => {
+    const formColumn = canvasElement.querySelector("[data-storybook-form-column]");
+    const component = formColumn.querySelector("ds-select");
+    const control = component.querySelector("select");
+
+    await expect(formColumn.offsetWidth).toBe(480);
+    await expect(component.offsetWidth).toBe(formColumn.offsetWidth);
+    await expect(control.offsetWidth).toBe(component.offsetWidth);
+  },
+};
