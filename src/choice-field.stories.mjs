@@ -2,40 +2,64 @@ import "@maria-ms/components-web/checkbox";
 import "@maria-ms/components-web/choice-field";
 import "@maria-ms/components-web/radio";
 import "@maria-ms/components-web/switch";
+import { expect } from "storybook/test";
 
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022879-3&m=dev";
+
+const controlDefaults = {
+  checkbox: {
+    error: "Choose whether to receive product updates.",
+    label: "Receive product updates",
+    message: "Get occasional updates about features and offers.",
+    name: "product-updates",
+    value: "yes",
+  },
+  radio: {
+    label: "Text message",
+    message: "Standard message rates may apply.",
+    name: "contact-preference",
+    value: "text-message",
+  },
+  switch: {
+    error: "Choose whether to receive product updates.",
+    label: "Product updates",
+    message: "Get occasional updates about features and offers.",
+    name: "product-updates",
+    value: "yes",
+  },
+};
 
 const choiceField = ({
   checked = false,
   control = "checkbox",
   disabled = false,
   invalid = false,
-  label = "Receive product updates",
-  message = "Get occasional updates about features and offers.",
-  name = "updates",
+  label,
+  message,
   required = false,
   showMessage = true,
   size = "medium",
-  value = "yes",
 } = {}) => {
+  const defaults = controlDefaults[control];
+  const showInvalid = invalid && control !== "radio";
   const component = document.createElement("ds-choice-field");
   const labelElement = document.createElement("label");
   const controlComponent = document.createElement(`ds-${control}`);
   const nativeControl = document.createElement("input");
 
   labelElement.slot = "label";
-  labelElement.textContent = label;
+  labelElement.textContent = label ?? defaults.label;
   controlComponent.slot = "control";
   controlComponent.setAttribute("size", size);
   nativeControl.type = control === "radio" ? "radio" : "checkbox";
-  nativeControl.name = name;
-  nativeControl.value = value;
+  nativeControl.name = defaults.name;
+  nativeControl.value = defaults.value;
   nativeControl.checked = checked;
   nativeControl.disabled = disabled;
   nativeControl.required = required;
   nativeControl.toggleAttribute("switch", control === "switch");
-  invalid && control !== "radio"
+  showInvalid
     ? nativeControl.setAttribute("aria-invalid", "true")
     : nativeControl.removeAttribute("aria-invalid");
   controlComponent.append(nativeControl);
@@ -45,11 +69,18 @@ const choiceField = ({
     const messageElement = document.createElement("p");
 
     messageElement.slot = "message";
-    messageElement.textContent = message;
+    messageElement.textContent = message ?? (showInvalid ? defaults.error : defaults.message);
     component.append(messageElement);
   }
 
-  return component;
+  const formColumn = document.createElement("div");
+
+  formColumn.dataset.storybookFormColumn = "";
+  formColumn.style.display = "block";
+  formColumn.style.inlineSize = "480px";
+  formColumn.style.maxInlineSize = "100%";
+  formColumn.append(component);
+  return formColumn;
 };
 
 export default {
@@ -60,19 +91,22 @@ export default {
     control: "checkbox",
     disabled: false,
     invalid: false,
-    label: "Receive product updates",
-    message: "Get occasional updates about features and offers.",
-    name: "updates",
     required: false,
     showMessage: true,
     size: "medium",
-    value: "yes",
   },
   argTypes: {
     control: {
-      control: "select",
+      control: {
+        type: "select",
+        labels: {
+          checkbox: "Checkbox",
+          radio: "Radio option",
+          switch: "Switch",
+        },
+      },
       options: ["checkbox", "radio", "switch"],
-      description: "One eligible public choice control inserted into Choice Field’s Control slot.",
+      description: "One fixed, meaningful public choice control composition.",
       table: { category: "Composition" },
     },
     size: {
@@ -80,16 +114,23 @@ export default {
       options: ["small", "medium", "large"],
       table: { category: "Appearance" },
     },
-    label: { control: "text", table: { category: "Content" } },
-    message: { control: "text", table: { category: "Content" } },
+    label: {
+      control: "text",
+      description: "Overrides the selected composition’s visible label.",
+      table: { category: "Content" },
+    },
+    message: {
+      control: "text",
+      description: "Overrides the selected composition’s supporting or error message.",
+      table: { category: "Content" },
+    },
     showMessage: { control: "boolean", table: { category: "Content" } },
     checked: { control: "boolean", table: { category: "Native behavior" } },
     disabled: { control: "boolean", table: { category: "Native behavior" } },
     required: { control: "boolean", table: { category: "Native behavior" } },
-    name: { control: "text", table: { category: "Native behavior" } },
-    value: { control: "text", table: { category: "Native behavior" } },
     invalid: {
       control: "boolean",
+      if: { arg: "control", neq: "radio" },
       description:
         "Maps to aria-invalid on Checkbox or Switch. Individual Radio errors belong to Radio Group.",
       table: { category: "Validation" },
@@ -99,4 +140,19 @@ export default {
   render: choiceField,
 };
 
-export const Playground = {};
+export const Playground = {
+  play: async ({ canvasElement }) => {
+    const formColumn = canvasElement.querySelector("[data-storybook-form-column]");
+    const component = formColumn.querySelector("ds-choice-field");
+    const choiceControl = component.querySelector('[slot="control"]');
+    const label = component.querySelector('[slot="label"]');
+    const message = component.querySelector('[slot="message"]');
+
+    await expect(formColumn.offsetWidth).toBe(480);
+    await expect(component.offsetWidth).toBe(formColumn.offsetWidth);
+    await expect(choiceControl.offsetWidth).toBeGreaterThan(0);
+    await expect(choiceControl.offsetWidth).toBeLessThan(component.offsetWidth);
+    await expect(label.offsetWidth).toBeGreaterThan(choiceControl.offsetWidth);
+    if (message) await expect(message.offsetWidth).toBe(label.offsetWidth);
+  },
+};
