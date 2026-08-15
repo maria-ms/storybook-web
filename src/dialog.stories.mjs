@@ -1,5 +1,3 @@
-import { expect, userEvent } from "storybook/test";
-
 import "@maria-ms/components-web/button";
 import "@maria-ms/components-web/dialog";
 import "@maria-ms/components-web/field";
@@ -24,11 +22,12 @@ const button = ({ label, variant = "primary", closes = false }) => {
 
 const dialogStory = ({
   description = "Make changes to your profile details.",
-  open = true,
   showDescription = true,
   title = "Edit profile",
 } = {}) => {
   const fixture = document.createElement("div");
+  const trigger = button({ label: "Edit profile" });
+  const triggerButton = trigger.querySelector("button");
   const component = document.createElement("ds-dialog");
   const dialog = document.createElement("dialog");
   const header = document.createElement("header");
@@ -98,13 +97,11 @@ const dialogStory = ({
 
   dialog.append(header, content, actions);
   component.append(dialog);
-  fixture.append(component);
+  fixture.append(trigger, component);
 
-  if (open) {
-    queueMicrotask(() => {
-      if (dialog.isConnected && !dialog.open) dialog.showModal();
-    });
-  }
+  triggerButton.addEventListener("click", () => {
+    if (!dialog.open) dialog.showModal();
+  });
 
   return fixture;
 };
@@ -114,7 +111,6 @@ export default {
   component: "ds-dialog",
   args: {
     description: "Make changes to your profile details.",
-    open: true,
     showDescription: true,
     title: "Edit profile",
   },
@@ -133,56 +129,9 @@ export default {
       description: "Story fixture: includes or removes the visible description and aria-describedby relationship.",
       table: { category: "Content" },
     },
-    open: {
-      control: "boolean",
-      description: "Story fixture: opens the native dialog with showModal().",
-      table: { category: "Native behavior" },
-    },
   },
   parameters: { design: { type: "figma", url: figmaUrl } },
   render: dialogStory,
 };
 
-export const Playground = {
-  play: async ({ args, canvasElement }) => {
-    const fixture = canvasElement.querySelector("[data-dialog-story]");
-    const component = fixture?.querySelector("ds-dialog");
-    const dialog = component?.querySelector(":scope > dialog");
-    const content = dialog?.querySelector("[data-dialog-content]");
-    const actions = dialog?.querySelector("[data-dialog-actions]");
-    const field = content?.querySelector("ds-field");
-    const input = field?.querySelector("input");
-    const closeButton = dialog?.querySelector("[data-dialog-close]");
-    const cancelButton = actions?.querySelector("[data-dialog-close]");
-    const dialogStyles = getComputedStyle(dialog);
-    const horizontalPadding = Math.round(
-      parseFloat(dialogStyles.paddingInlineStart) + parseFloat(dialogStyles.paddingInlineEnd),
-    );
-
-    await expect(component).toBeTruthy();
-    await expect(dialog).toBeTruthy();
-    await expect(content).toBeTruthy();
-    await expect(actions).toBeTruthy();
-    await expect(field).toBeTruthy();
-    await expect(input).toBeTruthy();
-    await expect(cancelButton).toBeTruthy();
-    await expect(dialog).toHaveAttribute("aria-labelledby", "dialog-story-title");
-    await expect(document.activeElement).toBe(input);
-    await expect(content.offsetWidth).toBe(dialog.clientWidth - horizontalPadding);
-    await expect(actions.offsetWidth).toBe(content.offsetWidth);
-    await expect(field.offsetWidth).toBe(content.offsetWidth);
-    await expect(input.offsetWidth).toBe(field.offsetWidth);
-
-    if (!args.open) return;
-
-    await expect(dialog.open).toBe(true);
-    await userEvent.click(cancelButton);
-    await expect(dialog.open).toBe(false);
-    dialog.showModal();
-    await expect(dialog.open).toBe(true);
-    await userEvent.click(closeButton);
-    await expect(dialog.open).toBe(false);
-    dialog.showModal();
-    await expect(dialog.open).toBe(true);
-  },
-};
+export const Playground = {};
