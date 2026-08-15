@@ -9,13 +9,14 @@ import "@maria-ms/components-web/text-input";
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40024551-2&m=dev";
 
-const button = ({ label, variant = "primary" }) => {
+const button = ({ label, variant = "primary", closes = false }) => {
   const component = document.createElement("ds-button");
   const nativeButton = document.createElement("button");
 
   component.setAttribute("size", "medium");
   component.setAttribute("variant", variant);
   nativeButton.type = "button";
+  if (closes) nativeButton.dataset.dialogClose = "";
   nativeButton.textContent = label;
   component.append(nativeButton);
   return component;
@@ -90,7 +91,10 @@ const dialogStory = ({
   content.dataset.dialogContent = "";
   content.append(field);
   actions.dataset.dialogActions = "";
-  actions.append(button({ label: "Cancel", variant: "secondary" }), button({ label: "Save changes" }));
+  actions.append(
+    button({ label: "Cancel", variant: "secondary", closes: true }),
+    button({ label: "Save changes" }),
+  );
 
   dialog.append(header, content, actions);
   component.append(dialog);
@@ -149,6 +153,7 @@ export const Playground = {
     const field = content?.querySelector("ds-field");
     const input = field?.querySelector("input");
     const closeButton = dialog?.querySelector("[data-dialog-close]");
+    const cancelButton = actions?.querySelector("[data-dialog-close]");
     const dialogStyles = getComputedStyle(dialog);
     const horizontalPadding = Math.round(
       parseFloat(dialogStyles.paddingInlineStart) + parseFloat(dialogStyles.paddingInlineEnd),
@@ -160,6 +165,7 @@ export const Playground = {
     await expect(actions).toBeTruthy();
     await expect(field).toBeTruthy();
     await expect(input).toBeTruthy();
+    await expect(cancelButton).toBeTruthy();
     await expect(dialog).toHaveAttribute("aria-labelledby", "dialog-story-title");
     await expect(document.activeElement).toBe(input);
     await expect(content.offsetWidth).toBe(dialog.clientWidth - horizontalPadding);
@@ -169,6 +175,10 @@ export const Playground = {
 
     if (!args.open) return;
 
+    await expect(dialog.open).toBe(true);
+    await userEvent.click(cancelButton);
+    await expect(dialog.open).toBe(false);
+    dialog.showModal();
     await expect(dialog.open).toBe(true);
     await userEvent.click(closeButton);
     await expect(dialog.open).toBe(false);
