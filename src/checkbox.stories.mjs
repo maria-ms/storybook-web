@@ -52,21 +52,21 @@ export default {
     checked: {
       control: "boolean",
       description: "Native checkbox checked state. It is not a ds-checkbox attribute.",
-      table: { category: "Native behavior" },
+      table: { category: "State" },
     },
     indeterminate: {
       control: "boolean",
       description: "Maps to input.indeterminate. It is a native property, not an HTML or ds-checkbox attribute.",
-      table: { category: "Native behavior" },
+      table: { category: "State" },
     },
-    disabled: { control: "boolean", table: { category: "Native behavior" } },
-    name: { control: "text", table: { category: "Native behavior" } },
-    value: { control: "text", table: { category: "Native behavior" } },
-    required: { control: "boolean", table: { category: "Native behavior" } },
+    disabled: { control: "boolean", table: { category: "State" } },
+    name: { control: "text", table: { category: "Native semantics" } },
+    value: { control: "text", table: { category: "Native semantics" } },
+    required: { control: "boolean", table: { category: "Native semantics" } },
     invalid: {
       control: "boolean",
       description: "Maps to aria-invalid=\"true\" on the native checkbox.",
-      table: { category: "Validation" },
+      table: { category: "State" },
     },
   },
   parameters: {

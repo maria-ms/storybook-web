@@ -42,7 +42,7 @@ const badge = ({
 export default {
   title: "Components/Badge",
   component: "ds-badge",
-  args: { color: "neutral", leadingIcon: false, size: "small", text: "Badge" },
+  args: { color: "neutral", size: "small" },
   argTypes: {
     color: {
       control: "select",
@@ -53,16 +53,6 @@ export default {
       control: "select",
       options: ["small", "medium", "large"],
       table: { category: "Appearance" },
-    },
-    text: {
-      control: "text",
-      description: "Required badge text. An optional decorative SVG may precede it in product markup.",
-      table: { category: "Content" },
-    },
-    leadingIcon: {
-      control: "boolean",
-      description: "Story fixture: inserts Figma’s decorative drafting-compass SVG. It is not a ds-badge attribute.",
-      table: { category: "Content" },
     },
   },
   parameters: { design: { type: "figma", url: figmaUrl } },

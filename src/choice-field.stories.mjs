@@ -88,52 +88,25 @@ export default {
   component: "ds-choice-field",
   args: {
     checked: false,
-    control: "checkbox",
     disabled: false,
     invalid: false,
     required: false,
-    showMessage: true,
     size: "medium",
   },
   argTypes: {
-    control: {
-      control: {
-        type: "select",
-        labels: {
-          checkbox: "Checkbox",
-          radio: "Radio option",
-          switch: "Switch",
-        },
-      },
-      options: ["checkbox", "radio", "switch"],
-      description: "One fixed, meaningful public choice control composition.",
-      table: { category: "Composition" },
-    },
     size: {
       control: "select",
       options: ["small", "medium", "large"],
       table: { category: "Appearance" },
     },
-    label: {
-      control: "text",
-      description: "Overrides the selected composition’s visible label.",
-      table: { category: "Content" },
-    },
-    message: {
-      control: "text",
-      description: "Overrides the selected composition’s supporting or error message.",
-      table: { category: "Content" },
-    },
-    showMessage: { control: "boolean", table: { category: "Content" } },
-    checked: { control: "boolean", table: { category: "Native behavior" } },
-    disabled: { control: "boolean", table: { category: "Native behavior" } },
-    required: { control: "boolean", table: { category: "Native behavior" } },
+    checked: { control: "boolean", table: { category: "State" } },
+    disabled: { control: "boolean", table: { category: "State" } },
+    required: { control: "boolean", table: { category: "Native semantics" } },
     invalid: {
       control: "boolean",
-      if: { arg: "control", neq: "radio" },
       description:
         "Maps to aria-invalid on Checkbox or Switch. Individual Radio errors belong to Radio Group.",
-      table: { category: "Validation" },
+      table: { category: "State" },
     },
   },
   parameters: { actions: { disable: true }, design: { type: "figma", url: figmaUrl } },

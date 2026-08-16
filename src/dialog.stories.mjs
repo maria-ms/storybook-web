@@ -111,27 +111,6 @@ const dialogStory = ({
 export default {
   title: "Components/Dialog",
   component: "ds-dialog",
-  args: {
-    description: "Make changes to your profile details.",
-    showDescription: true,
-    title: "Edit profile",
-  },
-  argTypes: {
-    title: {
-      control: "text",
-      table: { category: "Content" },
-    },
-    description: {
-      control: "text",
-      if: { arg: "showDescription" },
-      table: { category: "Content" },
-    },
-    showDescription: {
-      control: "boolean",
-      description: "Story fixture: includes or removes the visible description and aria-describedby relationship.",
-      table: { category: "Content" },
-    },
-  },
   parameters: { design: { type: "figma", url: figmaUrl } },
   render: dialogStory,
 };

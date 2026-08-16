@@ -92,7 +92,7 @@ export default {
       control: "select",
       options: ["manual", "automatic"],
       description: "Manual requires Enter or Space after Arrow navigation. Use automatic only for local, instant panels.",
-      table: { category: "Native behavior" },
+      table: { category: "Behavior" },
     },
   },
   parameters: { design: { type: "figma", url: figmaUrl } },
@@ -106,7 +106,8 @@ export const Playground = {
     const tabs = component?.querySelectorAll('button[role="tab"]');
     const panels = component?.querySelectorAll('[role="tabpanel"]');
     const [overview, activity, settings] = tabs ?? [];
-    const [, activityPanel, settingsPanel] = panels ?? [];
+    const [overviewPanel, activityPanel, settingsPanel] = panels ?? [];
+    const initialActivation = component?.activation;
     const themeTarget = canvasElement.closest("[data-theme]") ?? document.documentElement;
     const previousTheme = themeTarget.getAttribute("data-theme");
 
@@ -147,5 +148,11 @@ export const Playground = {
     await expect(settings).toHaveFocus();
     await expect(settings).toHaveAttribute("aria-selected", "true");
     await expect(settingsPanel).not.toHaveAttribute("hidden");
+
+    await userEvent.keyboard("{Home}");
+    component.activation = initialActivation;
+    await expect(overview).toHaveFocus();
+    await expect(overview).toHaveAttribute("aria-selected", "true");
+    await expect(overviewPanel).not.toHaveAttribute("hidden");
   },
 };

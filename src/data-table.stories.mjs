@@ -8,7 +8,7 @@ import "@maria-ms/components-web/progress";
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40024692-71&m=dev";
 
-const model = {
+const defaultModel = {
   caption: "Fulfilment records",
   rowKey: "id",
   columns: [
@@ -80,7 +80,18 @@ const renderers = {
   },
 };
 
-const dataTable = () => {
+const sortableText = (value) => {
+  if (
+    value !== null &&
+    typeof value === "object" &&
+    (typeof value.label === "string" || typeof value.label === "number")
+  ) {
+    return String(value.label);
+  }
+  return String(value ?? "");
+};
+
+const dataTable = ({ model = defaultModel } = {}) => {
   const frame = document.createElement("div");
   const component = document.createElement("ds-data-table");
 
@@ -94,8 +105,8 @@ const dataTable = () => {
     component.model = {
       ...component.model,
       rows: [...component.model.rows].sort((first, second) => {
-        const left = first.order.label;
-        const right = second.order.label;
+        const left = sortableText(first[detail.column]);
+        const right = sortableText(second[detail.column]);
         return detail.direction === "ascending"
           ? left.localeCompare(right)
           : right.localeCompare(left);
@@ -115,18 +126,19 @@ const dataTable = () => {
 export default {
   title: "Components/Data Table",
   component: "ds-data-table",
+  args: { model: defaultModel },
   argTypes: {
     model: {
-      control: false,
+      control: "object",
       description:
-        "A JSON-serializable property. Set cellRenderers before model when rich cells are present.",
+        "The public JSON-serializable model. It must satisfy the Data Table schema; the fixture registers renderers before applying it.",
       table: { category: "Data" },
     },
     cellRenderers: {
       control: false,
       description:
         "A JavaScript property whose functions return existing component nodes for rich Cell content.",
-      table: { category: "Composition" },
+      table: { category: "Data" },
     },
   },
   parameters: { design: { type: "figma", url: figmaUrl } },
@@ -196,7 +208,7 @@ export const Playground = {
     ).toHaveLength(2);
 
     component.model = {
-      ...model,
+      ...defaultModel,
       state: { kind: "loading", message: "Loading fulfilment records" },
     };
     const loadingScrollRegion = component?.querySelector(".ds-data-table__scroll");
@@ -209,7 +221,7 @@ export const Playground = {
     );
 
     component.model = {
-      ...model,
+      ...defaultModel,
       state: { kind: "empty", message: "No fulfilment records" },
     };
     const emptyScrollRegion = component?.querySelector(".ds-data-table__scroll");
@@ -219,7 +231,7 @@ export const Playground = {
     await expect(emptyCell).toHaveTextContent("No fulfilment records");
 
     component.model = {
-      ...model,
+      ...defaultModel,
       state: {
         kind: "error",
         message: "Fulfilment records could not be loaded.",
@@ -243,16 +255,16 @@ export const Playground = {
 
     await expect(() =>
       validateDataTableModel({
-        ...model,
-        columns: model.columns.map((column, index) =>
+        ...defaultModel,
+        columns: defaultModel.columns.map((column, index) =>
           index === 0 ? { ...column, hiddenLabel: true } : column,
         ),
       }),
     ).toThrow("cannot be both hiddenLabel and sortable");
     await expect(() =>
       validateDataTableModel({
-        ...model,
-        columns: model.columns.map((column, index) => {
+        ...defaultModel,
+        columns: defaultModel.columns.map((column, index) => {
           if (index !== 0) return column;
           const { renderer, ...plainColumn } = column;
           return plainColumn;
@@ -263,7 +275,7 @@ export const Playground = {
     const themeTarget = canvasElement.closest("[data-theme]") ?? document.documentElement;
     const previousTheme = themeTarget.getAttribute("data-theme");
     try {
-      component.model = model;
+      component.model = defaultModel;
       themeTarget.setAttribute("data-theme", "light");
       const lightSelectedRow = component?.querySelector('tbody tr[data-selected="true"]');
       const lightSelectedBackground = getComputedStyle(lightSelectedRow).backgroundColor;

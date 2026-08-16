@@ -41,7 +41,6 @@ export default {
   args: {
     checked: false,
     disabled: false,
-    label: "Option",
     name: "preference",
     required: false,
     size: "small",
@@ -56,17 +55,12 @@ export default {
     checked: {
       control: "boolean",
       description: "Native radio checked state. It is not a ds-radio attribute.",
-      table: { category: "Native behavior" },
+      table: { category: "State" },
     },
-    disabled: { control: "boolean", table: { category: "Native behavior" } },
-    name: { control: "text", table: { category: "Native behavior" } },
-    value: { control: "text", table: { category: "Native behavior" } },
-    required: { control: "boolean", table: { category: "Native behavior" } },
-    label: {
-      control: "text",
-      description: "Fixture-only native label content; it is not a ds-radio property.",
-      table: { category: "Content" },
-    },
+    disabled: { control: "boolean", table: { category: "State" } },
+    name: { control: "text", table: { category: "Native semantics" } },
+    value: { control: "text", table: { category: "Native semantics" } },
+    required: { control: "boolean", table: { category: "Native semantics" } },
   },
   parameters: {
     actions: { disable: true },

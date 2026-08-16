@@ -30,7 +30,6 @@ export default {
   component: "ds-link",
   args: {
     href: "#accessibility-guide",
-    label: "Read the accessibility guide.",
     rel: "",
     size: "x-small",
     target: "_self",
@@ -47,26 +46,21 @@ export default {
       options: ["x-small", "small", "medium", "large"],
       table: { category: "Appearance" },
     },
-    label: {
-      control: "text",
-      description: "Story fixture mapped to real anchor text and its accessible name; not a ds-link attribute.",
-      table: { category: "Content" },
-    },
     href: {
       control: "text",
       description: "Native anchor href. It is not a ds-link attribute.",
-      table: { category: "Content" },
+      table: { category: "Native semantics" },
     },
     target: {
       control: "select",
       options: ["_self", "_blank", "_parent", "_top"],
       description: "Native anchor target. It is not a ds-link attribute.",
-      table: { category: "Native behavior" },
+      table: { category: "Native semantics" },
     },
     rel: {
       control: "text",
       description: "Native anchor rel. It is not a ds-link attribute.",
-      table: { category: "Native behavior" },
+      table: { category: "Native semantics" },
     },
   },
   parameters: { design: { type: "figma", url: figmaUrl } },

@@ -63,10 +63,7 @@ export default {
   component: "ds-button",
   args: {
     disabled: false,
-    label: "Button",
-    leadingIcon: false,
     size: "small",
-    trailingIcon: false,
     variant: "primary",
   },
   argTypes: {
@@ -80,22 +77,7 @@ export default {
       options: ["small", "medium", "large"],
       table: { category: "Appearance" },
     },
-  disabled: { control: "boolean", table: { category: "Native behavior" } },
-    label: {
-      control: "text",
-      description: "Story fixture mapped to text inside the inner native button; not a ds-button attribute.",
-      table: { category: "Content" },
-    },
-    leadingIcon: {
-      control: "boolean",
-      description: "Story fixture mapped to the first decorative child of the inner native button; not a ds-button attribute.",
-      table: { category: "Content" },
-    },
-    trailingIcon: {
-      control: "boolean",
-      description: "Story fixture mapped to the last decorative child of the inner native button; not a ds-button attribute.",
-      table: { category: "Content" },
-    },
+    disabled: { control: "boolean", table: { category: "State" } },
   },
   parameters: { design: figma },
   render: button,

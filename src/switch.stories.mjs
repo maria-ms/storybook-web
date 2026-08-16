@@ -45,7 +45,6 @@ export default {
     checked: false,
     disabled: false,
     invalid: false,
-    label: "Email notifications",
     name: "notifications",
     required: false,
     size: "small",
@@ -61,27 +60,21 @@ export default {
       control: "boolean",
       description:
         "Native checkbox checked state. It is not a ds-switch attribute.",
-      table: { category: "Native behavior" },
+      table: { category: "State" },
     },
     disabled: {
       control: "boolean",
       description:
         "Native checkbox disabled state. It is not a ds-switch attribute.",
-      table: { category: "Native behavior" },
+      table: { category: "State" },
     },
-    name: { control: "text", table: { category: "Native behavior" } },
-    value: { control: "text", table: { category: "Native behavior" } },
-    required: { control: "boolean", table: { category: "Native behavior" } },
+    name: { control: "text", table: { category: "Native semantics" } },
+    value: { control: "text", table: { category: "Native semantics" } },
+    required: { control: "boolean", table: { category: "Native semantics" } },
     invalid: {
       control: "boolean",
       description: "Maps to aria-invalid=\"true\" on the native checkbox.",
-      table: { category: "Validation" },
-    },
-    label: {
-      control: "text",
-      description:
-        "Fixture-only native label content. It is not a ds-switch property.",
-      table: { category: "Content" },
+      table: { category: "State" },
     },
   },
   parameters: {

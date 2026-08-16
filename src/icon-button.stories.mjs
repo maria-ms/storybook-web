@@ -61,7 +61,7 @@ export default {
       options: ["small", "medium", "large"],
       table: { category: "Appearance" },
     },
-    disabled: { control: "boolean", table: { category: "Native behavior" } },
+    disabled: { control: "boolean", table: { category: "State" } },
     accessibleName: {
       control: "text",
       description: "Story fixture mapped to the inner native button's aria-label.",

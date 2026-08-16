@@ -72,21 +72,30 @@ export default {
       options: ["small", "medium", "large"],
       table: { category: "Appearance" },
     },
-    name: { control: "text", table: { category: "Native behavior" } },
+    name: { control: "text", table: { category: "Native semantics" } },
     value: {
-      control: "text",
+      control: {
+        type: "select",
+        labels: {
+          "": "No selection",
+          ro: "Romania",
+          fr: "France",
+          de: "Germany (disabled)",
+        },
+      },
+      options: ["", "ro", "fr", "de"],
       description:
         "Native select value; it is not a ds-select attribute.",
-      table: { category: "Content" },
+      table: { category: "Native semantics" },
     },
     options: { control: false, table: { disable: true } },
-    required: { control: "boolean", table: { category: "Native behavior" } },
-    disabled: { control: "boolean", table: { category: "Native behavior" } },
+    required: { control: "boolean", table: { category: "Native semantics" } },
+    disabled: { control: "boolean", table: { category: "State" } },
     invalid: {
       control: "boolean",
       description:
         'Maps to aria-invalid="true" on the native select; it is not a ds-select attribute.',
-      table: { category: "Validation" },
+      table: { category: "State" },
     },
   },
   parameters: {

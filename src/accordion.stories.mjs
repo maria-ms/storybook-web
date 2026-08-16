@@ -41,7 +41,7 @@ export default {
       control: "select",
       options: ["none", "accessibility", "styling", "animation"],
       description: "Native details open state. The Accordion keeps zero or one Item open.",
-      table: { category: "Native behavior" },
+      table: { category: "State" },
     },
   },
   parameters: {

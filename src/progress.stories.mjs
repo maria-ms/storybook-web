@@ -48,12 +48,12 @@ export default {
     value: {
       control: { type: "number", min: 0, step: 1 },
       description: "Native progress value. It is not a ds-progress attribute.",
-      table: { category: "Native behavior" },
+      table: { category: "Native semantics" },
     },
     max: {
       control: { type: "number", min: 1, step: 1 },
       description: "Native progress maximum. It is not a ds-progress attribute.",
-      table: { category: "Native behavior" },
+      table: { category: "Native semantics" },
     },
     accessibleName: {
       control: "text",
