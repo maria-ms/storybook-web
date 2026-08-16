@@ -1,3 +1,5 @@
+import { expect, userEvent } from "storybook/test";
+
 import "@maria-ms/components-web/field";
 import "@maria-ms/components-web/tabs";
 import "@maria-ms/components-web/text-input";
@@ -75,7 +77,7 @@ const tabs = ({ activation = "manual" } = {}) => {
   component.append(tablist, overviewPanel, activityPanel, settingsPanel);
   // Story-only: a stable panel region keeps the preview from jumping while
   // real product layouts remain free to own the panel's block size.
-  component.style.minBlockSize = "138px";
+  component.style.minBlockSize = "128px";
   formColumn.append(component);
 
   return formColumn;
@@ -97,4 +99,53 @@ export default {
   render: tabs,
 };
 
-export const Playground = {};
+export const Playground = {
+  play: async ({ canvasElement }) => {
+    const component = canvasElement.querySelector("ds-tabs");
+    const tablist = component?.querySelector('[role="tablist"]');
+    const tabs = component?.querySelectorAll('button[role="tab"]');
+    const panels = component?.querySelectorAll('[role="tabpanel"]');
+    const [overview, activity, settings] = tabs ?? [];
+    const [, activityPanel, settingsPanel] = panels ?? [];
+    const themeTarget = canvasElement.closest("[data-theme]") ?? document.documentElement;
+    const previousTheme = themeTarget.getAttribute("data-theme");
+
+    await expect(component).toBeTruthy();
+    await expect(tablist?.getBoundingClientRect().height).toBeCloseTo(24, 1);
+    await expect(overview?.getBoundingClientRect().height).toBeCloseTo(24, 1);
+    await expect(component?.getBoundingClientRect().height).toBeCloseTo(128, 1);
+
+    overview?.focus();
+    await userEvent.keyboard("{ArrowRight}");
+    await expect(activity).toHaveFocus();
+    await expect(overview).toHaveAttribute("aria-selected", "true");
+    await expect(activityPanel).toHaveAttribute("hidden");
+
+    try {
+      themeTarget.setAttribute("data-theme", "light");
+      const lightFocus = getComputedStyle(activity);
+      const lightBackground = lightFocus.backgroundColor;
+      const lightShadow = lightFocus.boxShadow;
+      await expect(lightFocus.borderRadius).toBe("4px");
+      await expect(lightShadow).not.toBe("none");
+
+      themeTarget.setAttribute("data-theme", "dark");
+      const darkFocus = getComputedStyle(activity);
+      await expect(darkFocus.backgroundColor).not.toBe(lightBackground);
+      await expect(darkFocus.boxShadow).not.toBe(lightShadow);
+    } finally {
+      if (previousTheme === null) themeTarget.removeAttribute("data-theme");
+      else themeTarget.setAttribute("data-theme", previousTheme);
+    }
+
+    await userEvent.keyboard("{Enter}");
+    await expect(activity).toHaveAttribute("aria-selected", "true");
+    await expect(activityPanel).not.toHaveAttribute("hidden");
+
+    component.activation = "automatic";
+    await userEvent.keyboard("{ArrowRight}");
+    await expect(settings).toHaveFocus();
+    await expect(settings).toHaveAttribute("aria-selected", "true");
+    await expect(settingsPanel).not.toHaveAttribute("hidden");
+  },
+};
