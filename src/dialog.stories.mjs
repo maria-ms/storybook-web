@@ -1,3 +1,5 @@
+import { expect, userEvent } from "storybook/test";
+
 import "@maria-ms/components-web/button";
 import "@maria-ms/components-web/dialog";
 import "@maria-ms/components-web/field";
@@ -64,7 +66,7 @@ const dialogStory = ({
     heading.append(descriptionElement);
   }
 
-  close.setAttribute("size", "medium");
+  close.setAttribute("size", "small");
   close.setAttribute("variant", "ghost");
   closeButton.type = "button";
   closeButton.dataset.dialogClose = "";
@@ -134,4 +136,45 @@ export default {
   render: dialogStory,
 };
 
-export const Playground = {};
+export const Playground = {
+  play: async ({ canvasElement }) => {
+    const fixture = canvasElement.querySelector("[data-dialog-story]");
+    const trigger = fixture?.querySelector("ds-button > button");
+    const dialog = fixture?.querySelector("dialog");
+    const close = dialog?.querySelector("[data-dialog-close]");
+    const input = dialog?.querySelector("input[autofocus]");
+    const themeTarget = canvasElement.closest("[data-theme]") ?? document.documentElement;
+    const previousTheme = themeTarget.getAttribute("data-theme");
+
+    await expect(trigger).toBeTruthy();
+    await expect(dialog).toBeTruthy();
+
+    await userEvent.click(trigger);
+    await expect(dialog).toHaveAttribute("open");
+    await expect(input).toHaveFocus();
+    await expect(close?.getBoundingClientRect().height).toBeCloseTo(32, 1);
+    await expect(close?.getBoundingClientRect().width).toBeCloseTo(32, 1);
+
+    close?.focus();
+    await expect(close).toHaveFocus();
+    try {
+      themeTarget.setAttribute("data-theme", "light");
+      const lightFocus = getComputedStyle(close);
+      const lightBackground = lightFocus.backgroundColor;
+      const lightShadow = lightFocus.boxShadow;
+      await expect(lightFocus.borderRadius).toBe("8px");
+      await expect(lightShadow).not.toBe("none");
+
+      themeTarget.setAttribute("data-theme", "dark");
+      const darkFocus = getComputedStyle(close);
+      await expect(darkFocus.backgroundColor).not.toBe(lightBackground);
+      await expect(darkFocus.boxShadow).not.toBe(lightShadow);
+    } finally {
+      if (previousTheme === null) themeTarget.removeAttribute("data-theme");
+      else themeTarget.setAttribute("data-theme", previousTheme);
+    }
+
+    await userEvent.click(close);
+    await expect(dialog).not.toHaveAttribute("open");
+  },
+};
