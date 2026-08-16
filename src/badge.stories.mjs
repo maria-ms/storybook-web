@@ -1,3 +1,5 @@
+import { expect } from "storybook/test";
+
 import "@maria-ms/components-web/badge";
 
 const figmaUrl =
@@ -24,7 +26,7 @@ const draftingCompass = () => {
 
 const badge = ({
   color = "neutral",
-  leadingIcon = true,
+  leadingIcon = false,
   size = "small",
   text = "Badge",
 } = {}) => {
@@ -40,7 +42,7 @@ const badge = ({
 export default {
   title: "Components/Badge",
   component: "ds-badge",
-  args: { color: "neutral", leadingIcon: true, size: "small", text: "Badge" },
+  args: { color: "neutral", leadingIcon: false, size: "small", text: "Badge" },
   argTypes: {
     color: {
       control: "select",
@@ -67,4 +69,51 @@ export default {
   render: badge,
 };
 
-export const Playground = {};
+export const Playground = {
+  play: async ({ canvasElement }) => {
+    const component = canvasElement.querySelector("ds-badge");
+    const colors = ["neutral", "primary", "success", "warning", "destructive", "blue"];
+    const themeTarget = canvasElement.closest("[data-theme]") ?? document.documentElement;
+    const previousTheme = themeTarget.getAttribute("data-theme");
+
+    await expect(component).toBeTruthy();
+
+    const backgroundsForTheme = (theme) => {
+      const backgrounds = new Map();
+
+      themeTarget.setAttribute("data-theme", theme);
+      for (const color of colors) {
+        component.setAttribute("color", color);
+        backgrounds.set(color, getComputedStyle(component).backgroundColor);
+      }
+      return backgrounds;
+    };
+
+    try {
+      const lightBackgrounds = backgroundsForTheme("light");
+      const darkBackgrounds = backgroundsForTheme("dark");
+
+      await expect(new Set(lightBackgrounds.values()).size).toBe(colors.length);
+      await expect(new Set(darkBackgrounds.values()).size).toBe(colors.length);
+
+      for (const color of colors) {
+        await expect(darkBackgrounds.get(color)).not.toBe(lightBackgrounds.get(color));
+      }
+
+      for (const [size, expectedHeight] of [
+        ["small", 20],
+        ["medium", 24],
+        ["large", 32],
+      ]) {
+        component.setAttribute("size", size);
+        await expect(component.offsetHeight).toBe(expectedHeight);
+      }
+    } finally {
+      if (previousTheme === null) themeTarget.removeAttribute("data-theme");
+      else themeTarget.setAttribute("data-theme", previousTheme);
+
+      component.setAttribute("color", "neutral");
+      component.setAttribute("size", "small");
+    }
+  },
+};
