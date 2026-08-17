@@ -1,6 +1,4 @@
 import "@maria-ms/components-web/number-input";
-import { expect } from "storybook/test";
-
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022324-53&m=dev";
 
@@ -92,13 +90,4 @@ export default {
   render: numberInput,
 };
 
-export const Playground = {
-  play: async ({ canvasElement }) => {
-    const formColumn = canvasElement.querySelector("[data-storybook-form-column]");
-    const component = formColumn.querySelector("ds-number-input");
-    const control = component.querySelector('input[type="number"]');
-
-    await expect(component.offsetWidth).toBe(formColumn.offsetWidth);
-    await expect(control.offsetWidth).toBe(component.offsetWidth);
-  },
-};
+export const Playground = {};

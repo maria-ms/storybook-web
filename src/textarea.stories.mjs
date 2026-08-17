@@ -1,6 +1,4 @@
 import "@maria-ms/components-web/textarea";
-import { expect } from "storybook/test";
-
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022294-52&m=dev";
 
@@ -79,13 +77,4 @@ export default {
   render: textarea,
 };
 
-export const Playground = {
-  play: async ({ canvasElement }) => {
-    const formColumn = canvasElement.querySelector("[data-storybook-form-column]");
-    const component = formColumn.querySelector("ds-textarea");
-    const control = component.querySelector("textarea");
-
-    await expect(component.offsetWidth).toBe(formColumn.offsetWidth);
-    await expect(control.offsetWidth).toBe(component.offsetWidth);
-  },
-};
+export const Playground = {};

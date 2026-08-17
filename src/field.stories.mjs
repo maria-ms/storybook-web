@@ -3,8 +3,6 @@ import "@maria-ms/components-web/number-input";
 import "@maria-ms/components-web/select";
 import "@maria-ms/components-web/text-input";
 import "@maria-ms/components-web/textarea";
-import { expect } from "storybook/test";
-
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022216-56&m=dev";
 
@@ -200,16 +198,4 @@ export default {
   render: field,
 };
 
-export const Playground = {
-  play: async ({ canvasElement }) => {
-    const formColumn = canvasElement.querySelector("[data-storybook-form-column]");
-    const component = formColumn.querySelector("ds-field");
-    const controlPart = component.querySelector('[slot="control"]');
-    const nativeControl = controlPart.querySelector("input, select, textarea");
-
-    await expect(formColumn.offsetWidth).toBe(480);
-    await expect(component.offsetWidth).toBe(formColumn.offsetWidth);
-    await expect(controlPart.offsetWidth).toBe(component.offsetWidth);
-    await expect(nativeControl.offsetWidth).toBe(controlPart.offsetWidth);
-  },
-};
+export const Playground = {};

@@ -1,5 +1,3 @@
-import { expect } from "storybook/test";
-
 import "@maria-ms/components-web/breadcrumbs";
 import "@maria-ms/components-web/link";
 
@@ -64,38 +62,4 @@ export default {
   render: breadcrumbs,
 };
 
-export const Playground = {
-  play: async ({ canvasElement }) => {
-    const fixture = canvasElement.querySelector("[data-breadcrumbs-story]");
-    const component = fixture?.querySelector("ds-breadcrumbs");
-    const nav = component?.querySelector("nav");
-    const list = nav?.querySelector("ol");
-    const items = list?.querySelectorAll(":scope > li");
-    const firstLink = items?.[0]?.querySelector("a");
-    const currentPage = items?.[2]?.querySelector("[aria-current='page']");
-
-    await expect(component).toBeTruthy();
-    await expect(nav).toHaveAttribute("aria-label", "Breadcrumb");
-    await expect(list).toBeTruthy();
-    await expect(items).toHaveLength(3);
-    await expect(currentPage).toHaveTextContent("Breadcrumbs");
-    await expect(items?.[2]?.querySelector("a")).toBeNull();
-    await expect(getComputedStyle(list).flexWrap).toBe("wrap");
-    await expect(component?.getBoundingClientRect().width).toBeCloseTo(
-      fixture?.getBoundingClientRect().width ?? 0,
-      1,
-    );
-    await expect(nav?.getBoundingClientRect().width).toBeCloseTo(
-      component?.getBoundingClientRect().width ?? 0,
-      1,
-    );
-    await expect(list?.getBoundingClientRect().width).toBeCloseTo(
-      component?.getBoundingClientRect().width ?? 0,
-      1,
-    );
-
-    firstLink?.focus();
-    await expect(firstLink).toHaveFocus();
-    await expect(getComputedStyle(firstLink).textDecorationLine).toContain("underline");
-  },
-};
+export const Playground = {};

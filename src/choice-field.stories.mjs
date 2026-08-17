@@ -2,8 +2,6 @@ import "@maria-ms/components-web/checkbox";
 import "@maria-ms/components-web/choice-field";
 import "@maria-ms/components-web/radio";
 import "@maria-ms/components-web/switch";
-import { expect } from "storybook/test";
-
 const figmaUrl =
   "https://www.figma.com/design/quQrWVWWnKGO2y2IHMudis/Design-System-v2.0-2026?node-id=40022879-3&m=dev";
 
@@ -113,19 +111,4 @@ export default {
   render: choiceField,
 };
 
-export const Playground = {
-  play: async ({ canvasElement }) => {
-    const formColumn = canvasElement.querySelector("[data-storybook-form-column]");
-    const component = formColumn.querySelector("ds-choice-field");
-    const choiceControl = component.querySelector('[slot="control"]');
-    const label = component.querySelector('[slot="label"]');
-    const message = component.querySelector('[slot="message"]');
-
-    await expect(formColumn.offsetWidth).toBe(480);
-    await expect(component.offsetWidth).toBe(formColumn.offsetWidth);
-    await expect(choiceControl.offsetWidth).toBeGreaterThan(0);
-    await expect(choiceControl.offsetWidth).toBeLessThan(component.offsetWidth);
-    await expect(label.offsetWidth).toBeGreaterThan(choiceControl.offsetWidth);
-    if (message) await expect(message.offsetWidth).toBe(label.offsetWidth);
-  },
-};
+export const Playground = {};

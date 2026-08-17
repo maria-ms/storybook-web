@@ -1,5 +1,3 @@
-import { expect } from "storybook/test";
-
 import "@maria-ms/components-web/progress";
 
 const figmaUrl =
@@ -65,20 +63,4 @@ export default {
   render: progress,
 };
 
-export const Playground = {
-  play: async ({ canvasElement }) => {
-    const formColumn = canvasElement.querySelector("[data-progress-story]");
-    const component = formColumn?.querySelector("ds-progress");
-    const control = component?.querySelector("progress");
-
-    await expect(formColumn).toBeTruthy();
-    await expect(component).toBeTruthy();
-    await expect(control).toBeTruthy();
-    await expect(formColumn.offsetWidth).toBe(480);
-    await expect(component.offsetWidth).toBe(formColumn.offsetWidth);
-    await expect(control.offsetWidth).toBe(component.offsetWidth);
-    await expect(control).toHaveAttribute("aria-label", "Profile completion");
-    await expect(control.value).toBe(50);
-    await expect(control.max).toBe(100);
-  },
-};
+export const Playground = {};

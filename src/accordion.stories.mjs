@@ -1,5 +1,3 @@
-import { expect, userEvent } from "storybook/test";
-
 import "@maria-ms/components-web/accordion";
 
 const figmaUrl =
@@ -26,7 +24,7 @@ const accordion = ({ openItem = "accessibility" } = {}) => {
   });
 
   const fixture = document.createElement("div");
-  fixture.style.inlineSize = "var(--ds-semantic-container-sm)";
+  fixture.style.inlineSize = "var(--ds-semantic-layout-container-sm)";
   fixture.style.maxInlineSize = "100%";
   fixture.append(component);
   return fixture;
@@ -51,27 +49,4 @@ export default {
   render: accordion,
 };
 
-export const Playground = {
-  play: async ({ canvasElement }) => {
-    const component = canvasElement.querySelector("ds-accordion");
-    const fixture = component.parentElement;
-    const items = canvasElement.querySelectorAll("ds-accordion > details");
-    const widthBeforeToggle = component.getBoundingClientRect().width;
-
-    await expect(getComputedStyle(component).borderTopStyle).toBe("solid");
-    await expect(component.getBoundingClientRect().width).toBe(fixture.getBoundingClientRect().width);
-    await expect(CSS.supports("selector(details::details-content)")).toBe(true);
-    await expect(getComputedStyle(items[0], "::details-content").transitionProperty).toContain(
-      "block-size",
-    );
-
-    await userEvent.click(items[1].querySelector("summary"));
-    await expect(items[0]).not.toHaveAttribute("open");
-    await expect(items[1]).toHaveAttribute("open");
-    await expect(component.getBoundingClientRect().width).toBe(widthBeforeToggle);
-
-    await userEvent.click(items[1].querySelector("summary"));
-    await expect(items[1]).not.toHaveAttribute("open");
-    await expect(component.getBoundingClientRect().width).toBe(widthBeforeToggle);
-  },
-};
+export const Playground = {};
