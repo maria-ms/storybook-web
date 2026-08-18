@@ -9,9 +9,41 @@ const countryOptions = [
   ["de", "Germany", true],
 ];
 
+const groupedCountryOptions = [
+  ["", "Choose a country", true],
+];
+
+const countryOptionGroups = [
+  [
+    "Europe",
+    [
+      ["fr", "France"],
+      ["de", "Germany"],
+    ],
+  ],
+  [
+    "North America",
+    [
+      ["ca", "Canada"],
+      ["us", "United States"],
+    ],
+  ],
+];
+
+const createOption = ([optionValue, label, optionDisabled = false]) => {
+  const option = document.createElement("option");
+
+  option.value = optionValue;
+  option.textContent = label;
+  option.disabled = optionDisabled;
+
+  return option;
+};
+
 const select = ({
   invalid = false,
   disabled = false,
+  optionGroups = [],
   name = "country",
   options = countryOptions,
   required = false,
@@ -31,13 +63,18 @@ const select = ({
   button.append(selectedContent);
   control.append(button);
 
-  for (const [optionValue, label, optionDisabled = false] of options) {
-    const option = document.createElement("option");
+  for (const option of options) {
+    control.append(createOption(option));
+  }
 
-    option.value = optionValue;
-    option.textContent = label;
-    option.disabled = optionDisabled;
-    control.append(option);
+  for (const [label, optionsInGroup] of optionGroups) {
+    const group = document.createElement("optgroup");
+
+    group.label = label;
+    for (const option of optionsInGroup) {
+      group.append(createOption(option));
+    }
+    control.append(group);
   }
 
   control.value = value;
@@ -104,3 +141,17 @@ export default {
 };
 
 export const Playground = {};
+
+export const GroupedOptions = {
+  name: "Grouped options",
+  parameters: {
+    controls: { disable: true },
+  },
+  render: (args) =>
+    select({
+      ...args,
+      options: groupedCountryOptions,
+      optionGroups: countryOptionGroups,
+      value: "",
+    }),
+};
