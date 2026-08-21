@@ -95,6 +95,7 @@ const dataTable = ({ model = defaultModel } = {}) => {
 
   frame.dataset.dataTableStory = "";
   frame.style.inlineSize = "760px";
+  frame.style.minInlineSize = "0";
   frame.style.maxInlineSize = "100%";
   component.cellRenderers = renderers;
   component.model = model;
@@ -139,7 +140,15 @@ export default {
       table: { category: "Data" },
     },
   },
-  parameters: { design: { type: "figma", url: figmaUrl } },
+  parameters: {
+    design: { type: "figma", url: figmaUrl },
+    docs: {
+      description: {
+        component:
+          "Resize the Canvas below the table’s computed minimum width to verify that fixed utility columns and the usable Fill column remain intact inside the table’s horizontal scroll region.",
+      },
+    },
+  },
   render: dataTable,
 };
 
