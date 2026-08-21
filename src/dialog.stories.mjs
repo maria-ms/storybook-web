@@ -48,19 +48,14 @@ const dialogStory = ({
   fixture.style.inlineSize = "100%";
   fixture.style.minBlockSize = "360px";
 
-  titleElement.id = "dialog-story-title";
   titleElement.dataset.dialogTitle = "";
   titleElement.textContent = title;
   heading.dataset.dialogHeading = "";
   heading.append(titleElement);
 
-  dialog.setAttribute("aria-labelledby", titleElement.id);
-
   if (showDescription) {
-    descriptionElement.id = "dialog-story-description";
     descriptionElement.dataset.dialogDescription = "";
     descriptionElement.textContent = description;
-    dialog.setAttribute("aria-describedby", descriptionElement.id);
     heading.append(descriptionElement);
   }
 
