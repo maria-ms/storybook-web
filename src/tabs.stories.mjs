@@ -42,7 +42,7 @@ const setTabContent = (tab, label, { badgeText, iconPath } = {}) => {
   }
 };
 
-const tabs = ({ activation = "manual" } = {}) => {
+const tabs = ({ activation = "manual", selected = "tabs-story-overview" } = {}) => {
   const formColumn = document.createElement("div");
   const component = document.createElement("ds-tabs");
   const tablist = document.createElement("div");
@@ -64,40 +64,43 @@ const tabs = ({ activation = "manual" } = {}) => {
   formColumn.style.maxInlineSize = "100%";
 
   component.setAttribute("activation", activation);
+  component.selected = selected;
   tablist.setAttribute("role", "tablist");
   tablist.setAttribute("aria-label", "Account settings");
 
   [
-    [overview, "Overview", "tabs-story-overview", "tabs-story-overview-panel", true, {
+    [overview, "Overview", "tabs-story-overview", "tabs-story-overview-panel", {
       badgeText: "3",
       iconPath: "m8 1.5 1.85 3.75 4.15.6-3 2.93.7 4.14L8 10.98l-3.7 1.94.7-4.14-3-2.93 4.15-.6L8 1.5Z",
     }],
-    [activity, "Activity", "tabs-story-activity", "tabs-story-activity-panel", false, {
+    [activity, "Activity", "tabs-story-activity", "tabs-story-activity-panel", {
       iconPath: "M1.5 8h2l1.25-3.5L7.25 12l1.5-4h2l1.25-3.5L14.5 8",
     }],
-    [settings, "Settings", "tabs-story-settings", "tabs-story-settings-panel", false],
-  ].forEach(([tab, labelText, id, panelId, selected, content]) => {
+    [settings, "Settings", "tabs-story-settings", "tabs-story-settings-panel"],
+  ].forEach(([tab, labelText, id, panelId, content]) => {
+    const isSelected = id === selected;
+
     tab.id = id;
     setTabContent(tab, labelText, content);
     tab.setAttribute("role", "tab");
     tab.setAttribute("aria-controls", panelId);
-    tab.setAttribute("aria-selected", String(selected));
-    tab.tabIndex = selected ? 0 : -1;
+    tab.setAttribute("aria-selected", String(isSelected));
+    tab.tabIndex = isSelected ? 0 : -1;
   });
 
   overviewPanel.id = "tabs-story-overview-panel";
   overviewPanel.setAttribute("role", "tabpanel");
   overviewPanel.setAttribute("aria-labelledby", overview.id);
-  overviewPanel.style.paddingBlockStart = "var(--ds-semantic-spacing-md)";
+  overviewPanel.hidden = selected !== overview.id;
   activityPanel.id = "tabs-story-activity-panel";
   activityPanel.setAttribute("role", "tabpanel");
   activityPanel.setAttribute("aria-labelledby", activity.id);
-  activityPanel.hidden = true;
+  activityPanel.hidden = selected !== activity.id;
   activityPanel.tabIndex = 0;
   settingsPanel.id = "tabs-story-settings-panel";
   settingsPanel.setAttribute("role", "tabpanel");
   settingsPanel.setAttribute("aria-labelledby", settings.id);
-  settingsPanel.hidden = true;
+  settingsPanel.hidden = selected !== settings.id;
   settingsPanel.tabIndex = 0;
 
   label.slot = "label";
@@ -127,13 +130,19 @@ const tabs = ({ activation = "manual" } = {}) => {
 export default {
   title: "Components/Tabs",
   component: "ds-tabs",
-  args: { activation: "manual" },
+  args: { activation: "manual", selected: "tabs-story-overview" },
   argTypes: {
     activation: {
       control: "select",
       options: ["manual", "automatic"],
       description: "Manual requires Enter or Space after Arrow navigation. Use automatic only for local, instant panels.",
       table: { category: "Behavior" },
+    },
+    selected: {
+      control: "select",
+      options: ["tabs-story-overview", "tabs-story-activity", "tabs-story-settings"],
+      description: "The id of the selected tab. User changes update this attribute and emit ds-tab-change.",
+      table: { category: "State" },
     },
   },
   parameters: { design: { type: "figma", url: figmaUrl } },
